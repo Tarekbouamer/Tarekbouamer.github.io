@@ -81,7 +81,7 @@ analytics:
 # Site Author
 author:
   name             : "Tarek Bouamer"
-  avatar           : "tarekbouamer.jpg"
+  avatar           : "tarek_bouamer.jpg"
   bio              : "I'm interested in computer vision, machine learning, optimization, and robotics."
   location         : "Paris, France"
   employer         :
