@@ -14,9 +14,11 @@ I was an intern and research assistant at the Institute of Computer Graphics and
 
 I am interested in solving computer vision problems using Deep Learning, such as 3D Scene Reconstrution and Visual Localization.
 
+
 <div style="display: flex; justify-content: center;">
   <blockquote class="twitter-tweet">
     <a class="twitter-timeline" data-lang="en" 
+    data-lang="en" data-width="800" data-height="500"
     href="https://twitter.com/TarekBouamer?ref_src=twsrc%5Etfw">Tweets by TarekBouamer
     </a>
   </blockquote>
