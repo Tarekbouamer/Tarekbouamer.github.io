@@ -30,7 +30,7 @@ Research Experience
   * Project: 3D Scene Completion using Plane Instance Segmentation
   * Supervisor: Prof. Friedrich Fraundorfer
 
-* Apr-Dec 2019: Research Internship
+* Apr-Sept 2018: Research Internship
   * Siemens PLM LMS. Leuven – Belgium
   * Project: Optimal control and planning for autonomous driving cars
   * Supervisor: Prof. Yasmina Bestaoui Sebbane
