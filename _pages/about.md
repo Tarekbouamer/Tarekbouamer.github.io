@@ -13,3 +13,5 @@ I received my bachelor's degree from the Institute of Electrical and Electronic 
 I was an intern and research assistant at the Institute of Computer Graphics and Vision (ICG), TU-Graz where I focused on 3D Scene Reconstruction and Understanding.
 
 I am interested in solving computer vision problems using Deep Learning, such as 3D Scene Reconstrution and Visual Localization.
+
+<a class="twitter-timeline" data-lang="en" data-width="1000" data-height="500" data-theme="dark" href="https://twitter.com/TarekBouamer?ref_src=twsrc%5Etfw">Tweets by TarekBouamer</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
