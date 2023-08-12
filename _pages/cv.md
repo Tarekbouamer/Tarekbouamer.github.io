@@ -11,10 +11,13 @@ redirect_from:
 
 Education
 ======
-* MSc. Control, Computer Vision and Signal Processing (ATSI),2012
-* M.S. in Jekyll, GitHub University, 2014
 
-Work experience
+* MSc. in Control, Computer Vision and Signal Processing (ATSI)CentraleSupelec & Paris-Sud University, 2019
+* MSc. in Smart Aerospace & Autonomous Systems (SAAS), Paris Saclay University, 2018
+* MSc. in Control and System Engineering, Institute of Electrical and Electronics Engineering (Ex.INELEC) - Boumerdes University, 2015
+* B.S in Electrical and Electronic Engineering, Institute of Electrical and Electronics Engineering (Ex.INELEC) - Boumerdes University, 2013
+
+<!-- Work experience
 ======
 * Summer 2015: Research Assistant
   * Github University
@@ -55,4 +58,4 @@ Teaching
   
 Service and leadership
 ======
-* Currently signed in to 43 different slack teams
+* Currently signed in to 43 different slack teams -->
