@@ -14,22 +14,29 @@ Education
 
 * MSc. in Control, Computer Vision and Signal Processing (ATSI)CentraleSupelec & Paris-Sud University, 2019
 * MSc. in Smart Aerospace & Autonomous Systems (SAAS), Paris Saclay University, 2018
-* MSc. in Control and System Engineering, Institute of Electrical and Electronics Engineering (Ex.INELEC) - Boumerdes University, 2015
-* B.S in Electrical and Electronic Engineering, Institute of Electrical and Electronics Engineering (Ex.INELEC) - Boumerdes University, 2013
+* MSc. in Control and System Engineering, INELEC - Boumerdes University, 2015
+* B.S in Electrical and Electronic Engineering, INELEC - Boumerdes University, 2013
 
-<!-- Work experience
+Research Experience
 ======
-* Summer 2015: Research Assistant
-  * Github University
-  * Duties included: Tagging issues
-  * Supervisor: Professor Git
 
-* Fall 2015: Research Assistant
-  * Github University
-  * Duties included: Merging pull requests
-  * Supervisor: Professor Hub
+* Jan-July 2020: Research Assistant
+  * Institute of Computer Graphics and Vision. Graz – Austria
+  * Project: Overhead Multi-Object Detection and Tracking (MOTS)
+  * Supervisor: Dr. Horst Possegger and Prof. Horst Bischof
+
+* Apr-Dec 2019: Research Internship
+  * Institute of Computer Graphics and Vision. Graz – Austria
+  * Project: 3D Scene Completion using Plane Instance Segmentation
+  * Supervisor: Prof. Friedrich Fraundorfer
+
+* Apr-Dec 2019: Research Internship
+  * Siemens PLM LMS. Leuven – Belgium
+  * Project: Optimal control and planning for autonomous driving cars
+  * Supervisor: Prof. Yasmina Bestaoui Sebbane
   
-Skills
+
+<!-- Skills
 ======
 * Skill 1
 * Skill 2
