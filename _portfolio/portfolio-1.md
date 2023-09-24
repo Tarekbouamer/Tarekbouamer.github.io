@@ -10,6 +10,4 @@ In this master's thesis, we assume that textureless areas are smooth and piecewi
 Finally; we evaluate our algorithm in terms of accuracy and completeness on the ETH-3D high
 resolution dataset.
 
-```bash 
-Keywords: Multi-View Stereo, Plane detection, Convolutional Neural Network
-```
+Keywords: Multi-View Stereo, Plane Detection and Segmentation, Convolutional Neural Network
