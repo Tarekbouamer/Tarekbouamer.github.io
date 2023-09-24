@@ -1,6 +1,7 @@
 ---
-title: "Machine Learning for Image Based 3D Reconstruction"
-excerpt: "Machine Learning for Image Based 3D Reconstruction<br /><img src='/images/master_thesis.png'>"
+title: "DeepPCF-MVS: Deep Plane Estimation and Filtering for Complete Multi-View Stereo"
+excerpt: "DeepPCF-MVS: Deep Plane Estimation and Filtering for Complete Multi-View Stereo<br /><img src='/images/DeepPCF-MVS: Deep Plane Estimation and
+Filtering for Complete Multi-View Stereo.png'>"
 collection: portfolio
 ---
 
@@ -9,21 +10,23 @@ collection: portfolio
 
 <body>
     <p>
-        Accurate 3D reconstruction (MVS) often encounters significant challenges when dealing with textureless
-        surfaces.
-    </p>
-    <p>
-        In this master thesis, we assume that textureless areas are smooth and piecewise planar, we present
-        a novel approach by leveraging plane segmentation (CNN) to improve to improve the accuracy
-        and completeness of depth and normal map estimation, particularly in scenes where traditional
-        photo-consistency-based methods fall short.
-    </p>
-    <p>
-        Finally; we evaluate our algorithm in terms of accuracy and completeness on the ETH-3D high
-        resolution dataset.
-    </p>
-    <p>
-        Keywords: Multi-View Stereo, Plane Detection and Segmentation, Convolutional Neural Network.
+        Abstract Multi-View Stereo (MVS)-based 3D reconstruction is a major topic in computer vision for
+        which a vast number of methods have been proposed over the last decades showing impressive visual results.
+        Long-since, benchmarks like Middlebury [45] numerically rank the individual methods considering
+        accuracy and completeness as quality attributes. While the Middlebury benchmark provides low-resolution
+        images only, the recently published ETH3D [44] and Tanks and Temples [23] benchmarks allow for an
+        evaluation of high-resolution and large-scale MVS from natural camera configurations. This benchmarking
+        reveals that still only few methods can be used for the reconstruction of large-scale models. We present
+        an effective pipeline for large-scale 3D reconstruction which extends existing methods in several ways:
+        (i) We introduce an outlier filtering considering the MVS geometry and make use of machine-learned
+        confidences for filtering [30]. (ii) To avoid incomplete models from local matching methods we propose
+        a plane completion method based on growing superpixels allowing a generic generation of high-quality 3D
+        models. We show further improvements by utilizing plane detections from a deep neural network [33] in
+        addition to superpixel segmentation masks to generate improved plane-based segmentation masks.
+        (iii) Finally, we use deep learning for a subsequent filtering of outliers in segmented sky areas.
+        We give experimental evidence on benchmarks that our contributions improve the quality of the 3D model
+        and our method is state-of-the-art in high-quality 3D reconstruction from high-resolution images or
+        large image sets.
     </p>
 </body>
 
