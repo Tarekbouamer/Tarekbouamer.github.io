@@ -1,7 +1,6 @@
 ---
-title: "Optimal Control and Planning for Autonomous Driving"
-excerpt: "Optimal Control and Planning for Autonomous Driving<br /><img
-    src='/images/optimal_control_master_thesis.png'>"
+title: "DeepPCF-MVS: Deep Plane Estimation and Filtering for Complete Multi-View Stereo"
+excerpt: "DeepPCF-MVS: Deep Plane Estimation and Filtering for Complete Multi-View Stereo<br /><img src='/images/DeepPCF-MVS.png'>"
 collection: portfolio
 ---
 
@@ -10,34 +9,26 @@ collection: portfolio
 
 <body>
     <p>
-        Safety is an emerging tasks in the field of Self-driving Cars that includes Perception,
-        Planning and Decision Making fields to improve the autonomy in all driving conditions
-        especially in the urban driving where the cars shares the environment with other vehicles and
-        pedestrians. Several research activities has been done and some promising results were
-        achieved.
-
-        In this master thesis, we have focused on Trajectory planning and Execution task that
-        enables our Amesim Car to overtake safely around predefined environment attempting to
-        reduce the error between the planning and execution. A kinodynamic motion planner like-
-        driver was developed to mimic the human driver actions and to provide us with an executable
-        path.
-
-        In addition, An optimal trajectory controller was designed to stabilize the vehicle and
-        track perfectly the reference under system constraints. A simple and complete model of
-        Amesim car was identified to be used in both path planning and controller design.
-
-        Finally, a co-simulation is carried for different scenarios: double lane change test and
-        racing track with different control schemes
+        Abstract Multi-View Stereo (MVS)-based 3D reconstruction is a major topic in computer vision for
+        which a vast number of methods have been proposed over the last decades showing impressive visual results.
+        Long-since, benchmarks like Middlebury [45] numerically rank the individual methods considering
+        accuracy and completeness as quality attributes. While the Middlebury benchmark provides low-resolution
+        images only, the recently published ETH3D [44] and Tanks and Temples [23] benchmarks allow for an
+        evaluation of high-resolution and large-scale MVS from natural camera configurations. This benchmarking
+        reveals that still only few methods can be used for the reconstruction of large-scale models. We present
+        an effective pipeline for large-scale 3D reconstruction which extends existing methods in several ways:
+        (i) We introduce an outlier filtering considering the MVS geometry and make use of machine-learned
+        confidences for filtering [30]. (ii) To avoid incomplete models from local matching methods we propose
+        a plane completion method based on growing superpixels allowing a generic generation of high-quality 3D
+        models. We show further improvements by utilizing plane detections from a deep neural network [33] in
+        addition to superpixel segmentation masks to generate improved plane-based segmentation masks.
+        (iii) Finally, we use deep learning for a subsequent filtering of outliers in segmented sky areas.
+        We give experimental evidence on benchmarks that our contributions improve the quality of the 3D model
+        and our method is state-of-the-art in high-quality 3D reconstruction from high-resolution images or
+        large image sets.
     </p>
 </body>
 
-</a>
-<p>
-    <a href="https://tarekbouamer.github.io/files/Optimal Control and Planning for Autonomous Driving.pdf">Download
-        thesis
-</p>
-<p>
-    <a href="https://github.com/Tarekbouamer/Optimal-Control-and-Planning-for-Autonomous-Driving">Code </a>
-</p>
+<a href="https://tarekbouamer.github.io/files/DeepPCF-MVS.pdf">Download thesis </a>
 
 </html>
