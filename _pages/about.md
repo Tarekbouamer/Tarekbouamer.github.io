@@ -17,7 +17,7 @@ My professional experience includes being a research assistant at the Institute 
 My research interests revolve around optimization and learning methodologies to solve intricate problems in computer vision, with a particular emphasis on 3D scene reconstruction and visual localization..
 
 
-<div style="display: flex; justify-content: center;">
+<!-- <div style="display: flex; justify-content: center;">
   <blockquote class="twitter-tweet">
     <a class="twitter-timeline" data-lang="en" 
     data-lang="en" data-width="800" data-height="500"
@@ -25,4 +25,4 @@ My research interests revolve around optimization and learning methodologies to 
     </a>
   </blockquote>
 </div>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
