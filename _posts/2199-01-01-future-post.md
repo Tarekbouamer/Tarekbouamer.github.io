@@ -1,11 +1,10 @@
 ---
-title: 'Future Blog Post'
-date: 2199-01-01
-permalink: /posts/2012/08/blog-post-4/
+title: 'Neural Radiance Fields'
+date: 2023-11-01
+permalink: /posts/NeRF/
 tags:
-  - cool posts
-  - category1
-  - category2
+  - NeRF
+  - 3D reconstruction
+  - rendering
 ---
 
-This post will show up by default. To disable scheduling of future posts, edit `config.yml` and set `future: false`. 
