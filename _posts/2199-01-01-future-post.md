@@ -1,4 +1,4 @@
----
+<!-- ---
 title: 'Neural Implicit Representation'
 date: 2023-11-01
 permalink: /posts/NIR/
@@ -277,4 +277,4 @@ Neural Rendering can be used for a wide range of applications, including novel v
 [3] [A point set generation network for 3D object reconstruction from a single image](https://arxiv.org/abs/1612.00603)
 [4] [AtlasNet: A Papier-Mâché Approach to Learning 3D Surface Generation](https://arxiv.org/abs/1802.05384)
 [5] [Occupancy Networks: Learning 3D Reconstruction in Function Space](https://arxiv.org/pdf/1812.03828.pdf)
-[6] [Marching Cubes: A High Resolution 3D Surface Construction Algorithm](https://dl.acm.org/doi/10.1145/37402.37422)
+[6] [Marching Cubes: A High Resolution 3D Surface Construction Algorithm](https://dl.acm.org/doi/10.1145/37402.37422) -->
