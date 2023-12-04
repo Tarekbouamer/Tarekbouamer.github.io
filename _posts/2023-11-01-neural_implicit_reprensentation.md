@@ -37,7 +37,7 @@ Volume Rendering and View Synthesis are two techniques used in computer graphics
 
 ## Definition
 
-Implicit Neural Representation (*INR*) is a novel concept within machine learning and computer graphics that represents an object or scene as a continuous function, rather than an explicit surface or structure. Implicit Neural Representation aims to learn a mathematical function \( f(x, y) = 0 \) or implicit representation that can generate the desired data points.
+Implicit Neural Representation (*INR*) is a novel concept within machine learning and computer graphics that represents an object or scene as a continuous function, rather than an explicit surface or structure. Implicit Neural Representation aims to learn a mathematical function $ f(x, y) = 0 $ or implicit representation that can generate the desired data points.
 
 <div align="center">
   <img src="/images/NIR/nir.png" alt="NIR">
@@ -56,7 +56,7 @@ Learning-based approaches for 3D reconstruction have gained popularity for its r
 
 ### Voxel
 
-Voxel are easy to process by neural network and commonly used in generative 3D tasks, by discretizing  the space into a set of 3D voxel grids. However, Due to its cubic memory \(O(n^3)\), the voxels representations are limited to small resolutions of the underlying 3D grid. [2]
+Voxel are easy to process by neural network and commonly used in generative 3D tasks, by discretizing  the space into a set of 3D voxel grids. However, Due to its cubic memory $O(n^3)$, the voxels representations are limited to small resolutions of the underlying 3D grid. [2]
 
 ### Point
 
@@ -68,16 +68,16 @@ Representing the output as a set of triangles (vertices and faces) is a very com
 
 ### Occupancy Networks
 
-the *Occupancy Networks* implicitly represents the 3D surface as a decision boundary of a nonlinear classifier, and for every point \(\mathbf{p} \in \mathbb{R}^3\) in the 3D space, the network predicts the probability of the point being inside the object. The occupancy function is defined as:
+the *Occupancy Networks* implicitly represents the 3D surface as a decision boundary of a nonlinear classifier, and for every point $\mathbf{p} \in \mathbb{R}^3$ in the 3D space, the network predicts the probability of the point being inside the object. The occupancy function is defined as:
 
 $$
 \mathbf{o} :\mathbb{R}^3 \rightarrow [0, 1]
 $$
 
 
-The occupancy function is approximated by a deep neural network \(f_\theta\) with parameters \(\theta\) that takes an observation \(\mathbf{x} \in X\) as input condition (ex. image, point clouds,...), and it has a function from \(\mathbf{p} \in \mathbb{R}^3\) to \(\mathbb{R}\) as an occupancy probability.
+The occupancy function is approximated by a deep neural network $f_\theta$ with parameters $\theta$ that takes an observation $\mathbf{x} \in X$ as input condition (ex. image, point clouds,...), and it has a function from $\mathbf{p} \in \mathbb{R}^3$ to $\mathbb{R}$ as an occupancy probability.
 
-For each input pair \((p,x)\), we can write the *occupancy network function* as:
+For each input pair $(p,x)$, we can write the *occupancy network function* as:
 
 $$
 f_\theta : \mathbb{R}^3  \times X \rightarrow [0, 1]
@@ -90,7 +90,7 @@ $$
 
 The advantage of the occupancy network is a continuous representation with an infinite resolution, the representation is not restricted to a specific class as in the mesh representation and it has a low memory footprint.
 
-To learn the parameters $\theta$, we randomly sample 3D points (ex. $K=2048$) in the volume and minimize the binary cross-entropy \(BCE\) loss function:
+To learn the parameters $\theta$, we randomly sample 3D points (ex. $K=2048$) in the volume and minimize the binary cross-entropy $BCE$ loss function:
 
 $$
 L(\theta, \psi) = \sum_{j=0}^{N} BCE(f_\theta (p_{ij}, z{i}) , o_{ij} )
@@ -110,12 +110,11 @@ $$
   <img src="/images/NIR/nir_light_view.png" alt="NIR">
 </div>
 
+The network encodes both an input 2D image and the corresponding 3D shape into a latent representations $z$ and $s$, as a conditioning to the occupancy network. The model predicts the occupancy probability for each 3D point $p$ and the color $c$, *Surface Light Fields*.
 
-The network encodes both an input 2D image and the corresponding 3D shape into a latent representations \(z\) and \(s\), as a conditioning to the occupancy network. The model predicts the occupancy probability for each 3D point \(p\) and the color \(c\), *Surface Light Fields*.
+- The light $l$,  denotes the light source parameters, such as the light direction, color, and intensity.
 
-- The light \(l\),  denotes the light source parameters, such as the light direction, color, and intensity.
-
-The network is trained to minimize the photometric loss function between the predicted image \(I\) and the input image \(\hat{I}\):
+The network is trained to minimize the photometric loss function between the predicted image $I$ and the input image $\hat{I}$:
 
 $$
 L(I, \hat{I}) = \left \| I - \hat{I}   \right \|_1
@@ -140,11 +139,10 @@ We process the inputs thought an encoder to extract feature embeddings, we use P
   <img src="/images/NIR/nir_plane.png" alt="NIR">
 </div>
 
-
 For each input point, we perform an orthographic projection onto a canonical plane, aligned with the axes of the coordinate frame, which we discretize at a resolution of H × W pixel cells.
 
 We aggregate features projecting onto the same pixel using average
-pooling, resulting in planar features with dimensionality \(H × W × d\).
+pooling, resulting in planar features with dimensionality $H × W × d$.
 
 - **Volume Encoding**:
 
@@ -152,9 +150,8 @@ pooling, resulting in planar features with dimensionality \(H × W × d\).
   <img src="/images/NIR/nir_volume.png" alt="NIR">
 </div>
 
-
 The volumetric encodings represents the 3D information better than a 2D planar, However, the resolution is restricted by the memory footprint.
-The average pooling is performed  all over the voxel cell, resulting in a feature volume with dimensionality \(H × W × D × d\).
+The average pooling is performed  all over the voxel cell, resulting in a feature volume with dimensionality $H × W × D × d$.
 
 - **Convolutional Decoder**:
 
@@ -162,9 +159,9 @@ The convolutional decoder processes the resulting feature planes and feature vol
 
 - **Occupancy Prediction**:
 
-Given the aggregated features, we predict the occupancy probability for each 3D point \(p\) by projecting each point onto the corresponding plane and query the feature vector using bilinear interpolation. For multiple planes, we sum the features of all planes. For the volume, we query the feature vector using trilinear interpolation.
+Given the aggregated features, we predict the occupancy probability for each 3D point $p$ by projecting each point onto the corresponding plane and query the feature vector using bilinear interpolation. For multiple planes, we sum the features of all planes. For the volume, we query the feature vector using trilinear interpolation.
 
-For a resulting feature vector \(x\) at point \(p\), denoted as  \(\psi(p,x)\), we predict the occupancy probability using fully connected layers occupancy network, as:
+For a resulting feature vector $x$ at point $p$, denoted as $\psi(p,x)$, we predict the occupancy probability using fully connected layers occupancy network, as:
 
 $$
 f_\theta : (p, \psi(p,x)) \rightarrow [0, 1]
@@ -199,7 +196,7 @@ The marching cubes algorithm is a method for extracting a polygonal mesh of an i
 Algorithm:
 
 - We divide the 3D space into a grid of cubes (8 vertices).
-- For each cube, we evaluate the cube vertices and compare them to the threshold value \(\tau\).
+- For each cube, we evaluate the cube vertices and compare them to the threshold value $\tau$.
 - We construct a triangulation for each cube, based on the vertices that are intersected by the iso-surface.
 - Based on the triangulations, We generate polygons for each cube  and we merge the polygons to form the final mesh.
 - We optimize the mesh by removing the duplicated vertices and edges.
@@ -212,18 +209,15 @@ MISE is a method that incrementally building an octree to extract high resolutio
   <img src="/images/NIR/nir_MISE.png" alt="NIR">
 </div>
 
+- We divide the 3D space into an initial resolution (ex. $32^2$), and we compute the occupancy function $f_\theta(p,x)$ for each cell.
 
-- We divide the 3D space into an initial resolution (ex. \(32^2\)), and we compute the occupancy function \(f_\theta(p,x)\) for each cell.
+- We set a threshold value $\tau$ and we mark a grid points "occupied" if the occupancy function $f_\theta(p,x)$ is greater than the threshold.
 
-- We set a threshold value \(\tau\) and we mark a grid points "occupied" if the occupancy function \(f_\theta(p,x)\) is greater than the threshold.
-
-- We subdivide the query space into 8 sub-cells and we evaluate the occupancy function \(f_\theta(p,x)\) for each cell.
+- We subdivide the query space into 8 sub-cells and we evaluate the occupancy function $f_\theta(p,x)$ for each cell.
 
 - We repeat the process until we reach the desired resolution.
 
-- At the end, we apply the marching cubes algorithm to extract an approximate iso-surface, defined by the threshold value \(\tau\): { \( \ p \in \mathbb{R}^3  \ \ | \ \ f_\theta(p, x) = \tau \) }
-
-
+- At the end, we apply the marching cubes algorithm to extract an approximate iso-surface, defined by the threshold value $\tau$: { $ \ p \in \mathbb{R}^3  \ \ | \ \ f_\theta(p, x) = \tau $ }
 
 ## Differentiable Volumetric Rendering
 
@@ -235,24 +229,22 @@ Learning based 3D reconstruction methods have shown impressive results, however 
   <img src="/images/NIR/dvr_arch.png" alt="NIR">
 </dev>
 
-
 *Differentiable Rendering* aims to learn 3D reconstruction from RGB images only, by using the concept of implicit representation in deriving the depth gradients.
 
-The input image is processed with an encoder to extract latent representation \(z \in \mathbb{Z} \) as a conditioning to the occupancy network \(f_\theta\), as introduced in the Occupancy Networks. The 3D surface shape is determined by a threshold value \(\tau\), such as \(f_\theta(p, z) = \tau\).
+The input image is processed with an encoder to extract latent representation $z \in \mathbb{Z} $ as a conditioning to the occupancy network $f_\theta$, as introduced in the Occupancy Networks. The 3D surface shape is determined by a threshold value $\tau$, such as $f_\theta(p, z) = \tau$.
 
-The texture of a 3D shape can be described using a texture field \(t_\theta: \mathbb{R}^3 \times \mathbb{Z} \rightarrow \mathbb{R}^3\); which regresses the RGB color value for every point \(p \in \mathbb{R}^3 \), conditioned on the same latent representation \(z \in \mathbb{Z}\). The texture of an object is determined by the value of \(t_\theta\) at the surface \(f_\theta = \tau\).
+The texture of a 3D shape can be described using a texture field $t_\theta: \mathbb{R}^3 \times \mathbb{Z} \rightarrow \mathbb{R}^3$; which regresses the RGB color value for every point $p \in \mathbb{R}^3 $, conditioned on the same latent representation $z \in \mathbb{Z}$. The texture of an object is determined by the value of $t_\theta$ at the surface $f_\theta = \tau$.
 
 <dev>
   <img src="/images/NIR/dvr_backpropagation.png" alt="NIR">
 </dev>
 
-
-We define the photometric loss function between the input image \(I\), and the rendered image \(\hat{I}\) as:
+We define the photometric loss function between the input image $I$, and the rendered image $\hat{I}$ as:
 
 $$
 L(\hat{I}, I) = \sum_{u} \left \| \hat{I_u} - I_u  \right \|_1
 $$
-\(u\) denotes the pixel location in the image.
+$u$ denotes the pixel location in the image.
 
 TODO: add the backpropagation equations
 
