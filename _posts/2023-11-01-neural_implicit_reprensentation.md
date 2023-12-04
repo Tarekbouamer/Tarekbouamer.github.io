@@ -42,7 +42,6 @@ Implicit Neural Representation (*INR*) is a novel concept within machine learnin
 <div align="center">
   <img src="/images/NIR/nir.png" alt="NIR">
 </div>
-</p>
 
 Learning-based approaches for 3D reconstruction have gained popularity for its rich representation to 3D models, compared to the traditional Multi View Stereo (*MVS*) algorithms. Through literature, Deep learning approaches are categorized into three representations:
 
@@ -53,7 +52,7 @@ Learning-based approaches for 3D reconstruction have gained popularity for its r
 <div align="center">
   <img src="/images/NIR/nir_representations.png" alt="NIR">
 </div>
-</p>
+
 
 ### Voxel
 
@@ -87,11 +86,11 @@ $$
 <div align="center">
   <img src="/images/NIR/nir_arch.png" alt="NIR">
 </div>
-</p>
+
 
 The advantage of the occupancy network is a continuous representation with an infinite resolution, the representation is not restricted to a specific class as in the mesh representation and it has a low memory footprint.
 
-To learn the parameters \(\theta\), we randomly sample 3D points (ex. \(K\)=2048) in the volume and minimize the binary cross-entropy \(BCE\) loss function:
+To learn the parameters $\theta$, we randomly sample 3D points (ex. $K=2048$) in the volume and minimize the binary cross-entropy \(BCE\) loss function:
 
 $$
 L(\theta, \psi) = \sum_{j=0}^{N} BCE(f_\theta (p_{ij}, z{i}) , o_{ij} )
@@ -101,7 +100,7 @@ $$
 
 #### Appearance, Geometry, and Surfaces properties
 
-The implicit representation can be extended to have more objects properties and reasoning, such as the surface lightening and the view point. The occupancy network can conditioned by the viewing direction \(v\) and light location \(l\) for any 3D point \(p\), for each input tuple \((p,v,l)\), we can write the *occupancy network function* as:
+The implicit representation can be extended to have more objects properties and reasoning, such as the surface lightening and the view point. The occupancy network can conditioned by the viewing direction $v$ and light location $l$ for any 3D point $p$, for each input tuple $(p,v,l)$, we can write the *occupancy network function* as:
 
 $$
 f_\theta : \mathbb{R}^3  \times \mathbb{R}^3 \times \mathbb{R}^M \rightarrow [0, 1]
@@ -110,7 +109,7 @@ $$
 <div align="center">
   <img src="/images/NIR/nir_light_view.png" alt="NIR">
 </div>
-</p>
+
 
 The network encodes both an input 2D image and the corresponding 3D shape into a latent representations \(z\) and \(s\), as a conditioning to the occupancy network. The model predicts the occupancy probability for each 3D point \(p\) and the color \(c\), *Surface Light Fields*.
 
@@ -140,7 +139,7 @@ We process the inputs thought an encoder to extract feature embeddings, we use P
 <div align="center">
   <img src="/images/NIR/nir_plane.png" alt="NIR">
 </div>
-</p>
+
 
 For each input point, we perform an orthographic projection onto a canonical plane, aligned with the axes of the coordinate frame, which we discretize at a resolution of H × W pixel cells.
 
@@ -152,7 +151,7 @@ pooling, resulting in planar features with dimensionality \(H × W × d\).
 <div align="center">
   <img src="/images/NIR/nir_volume.png" alt="NIR">
 </div>
-</p>
+
 
 The volumetric encodings represents the 3D information better than a 2D planar, However, the resolution is restricted by the memory footprint.
 The average pooling is performed  all over the voxel cell, resulting in a feature volume with dimensionality \(H × W × D × d\).
@@ -212,7 +211,7 @@ MISE is a method that incrementally building an octree to extract high resolutio
 <div align="center">
   <img src="/images/NIR/nir_MISE.png" alt="NIR">
 </div>
-</p>
+
 
 - We divide the 3D space into an initial resolution (ex. \(32^2\)), and we compute the occupancy function \(f_\theta(p,x)\) for each cell.
 
@@ -235,7 +234,7 @@ Learning based 3D reconstruction methods have shown impressive results, however 
 <dev>
   <img src="/images/NIR/dvr_arch.png" alt="NIR">
 </dev>
-</p>
+
 
 *Differentiable Rendering* aims to learn 3D reconstruction from RGB images only, by using the concept of implicit representation in deriving the depth gradients.
 
@@ -246,7 +245,7 @@ The texture of a 3D shape can be described using a texture field \(t_\theta: \ma
 <dev>
   <img src="/images/NIR/dvr_backpropagation.png" alt="NIR">
 </dev>
-</p>
+
 
 We define the photometric loss function between the input image \(I\), and the rendered image \(\hat{I}\) as:
 
