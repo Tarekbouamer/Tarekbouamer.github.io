@@ -31,9 +31,6 @@ tags:
 
 In this tutorial, we will approach the Neural Implicit Representation principals and its applications in computer vision, graphics, and  robotics.
 
-## Conceptional Overview
-
-Volume Rendering and View Synthesis are two techniques used in computer graphics:
 
 ## Definition
 
