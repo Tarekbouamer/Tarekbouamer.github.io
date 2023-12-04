@@ -8,32 +8,31 @@ tags:
   - Deep Learning
 ---
 
-## Neural Implicit Representation
 
-### Table of Contents
+## Table of Contents
 
   1. [Introduction](#introduction)
   2. [Definition](#definition)
   3. [Representations](#representations)
-    - [2.1 Voxel](#21-voxel)
-    - [2.2 Point](#22-point)
-    - [2.3 Mesh](#23-mesh)
-    - [2.4 Occupancy Networks](#24-occupancy-networks)
-      - [2.4.1 Appearance, Geometry, and Surfaces properties](#241-appearance-geometry-and-surfaces-properties)
-      - [2.4.2 Convolutional Occupancy Networks](#242-convolutional-occupancy-networks)
+      - [2.1 Voxel](#21-voxel)
+      - [2.2 Point](#22-point)
+      - [2.3 Mesh](#23-mesh)
+      - [2.4 Occupancy Networks](#24-occupancy-networks)
+          - [2.4.1 Appearance, Geometry, and Surfaces properties](#241-appearance-geometry-and-surfaces-properties)
+          - [2.4.2 Convolutional Occupancy Networks](#242-convolutional-occupancy-networks)
   4. [Mesh Extraction](#mesh-extraction)
   5. [Neural Rendering](#neural-rendering)
   6. [References](#references)
   
-### Introduction
+## Introduction
 
 In this tutorial, we will approach the Neural Implicit Representation principals and its applications in computer vision, graphics, and  robotics.
 
-### Conceptional Overview
+## Conceptional Overview
 
 Volume Rendering and View Synthesis are two techniques used in computer graphics:
 
-### Definition
+## Definition
 
 Implicit Neural Representation (*INR*) is a novel concept within machine learning and computer graphics that represents an object or scene as a continuous function, rather than an explicit surface or structure. Implicit Neural Representation aims to learn a mathematical function \( f(x, y) = 0 \) or implicit representation that can generate the desired data points.
 
@@ -44,7 +43,7 @@ Implicit Neural Representation (*INR*) is a novel concept within machine learnin
 
 Learning-based approaches for 3D reconstruction have gained popularity for its rich representation to 3D models, compared to the traditional Multi View Stereo (*MVS*) algorithms. Through literature, Deep learning approaches are categorized into three representations:
 
-#### Representations
+## Representations
 
 *What is a good representation ?*
 
@@ -53,19 +52,19 @@ Learning-based approaches for 3D reconstruction have gained popularity for its r
 </div>
 </p>
 
-##### 2.1 Voxel
+### 2.1 Voxel
 
 Voxel are easy to process by neural network and commonly used in generative 3D tasks, by discretizing  the space into a set of 3D voxel grids. However, Due to its cubic memory \(O(n^3)\), the voxels representations are limited to small resolutions of the underlying 3D grid. [2]
 
-##### 2.2 Point
+### 2.2 Point
 
 As an alternative to the voxel representation, the output can be represented as a set of 3D point clouds.However, the point representation doesn't preserve the model connectivity and topology, hence require a post-processing steps to extract 3D mesh. The point representation is also limited by the number of points, which affects the resolution of the final model. [3]
 
-##### 2.3 Mesh
+### 2.3 Mesh
 
 Representing the output as a set of triangles (vertices and faces) is a very complicated structure that requires reference template from the same object class. Yet, the approach is still limited by the memory requirements and the resolution of the mesh. [4]
 
-##### 2.4 Occupancy Networks
+### 2.4 Occupancy Networks
 
 the *Occupancy Networks* implicitly represents the 3D surface as a decision boundary of a nonlinear classifier, and for every point \(\mathbf{p} \in \mathbb{R}^3\) in the 3D space, the network predicts the probability of the point being inside the object. The occupancy function is defined as:
 
@@ -187,11 +186,11 @@ $$
 
 - The convolutional occupancy network shows a good generalization and scalability for large scenes, we can use a hierarchical approach to process the scene using sliding window.
 
-### Mesh Extraction
+## Mesh Extraction
 
 The mesh extraction is a post-processing step that extracts the 3D mesh from the occupancy network.
 
-#### 3.1 Marching Cubes
+### 3.1 Marching Cubes
 
 The marching cubes algorithm is a method for extracting a polygonal mesh of an isosurface from a 3D scalar field. The iso-surface is formed by connecting the vertices of the cubes that are intersected by the iso-surface.
 
@@ -203,7 +202,7 @@ Algorithm:
 - Based on the triangulations, We generate polygons for each cube  and we merge the polygons to form the final mesh.
 - We optimize the mesh by removing the duplicated vertices and edges.
 
-#### 3.2 Multiresolution Iso-Surface Extraction (MISE)
+### 3.2 Multiresolution Iso-Surface Extraction (MISE)
 
 MISE is a method that incrementally building an octree to extract high resolution meshes from the occupancy function.
 
@@ -224,7 +223,7 @@ MISE is a method that incrementally building an octree to extract high resolutio
 
 
 
-### Differentiable Volumetric Rendering
+## Differentiable Volumetric Rendering
 
 > Learning from images only !
 
@@ -255,12 +254,10 @@ $$
 
 TODO: add the backpropagation equations
 
-### References
+## References
 
 [1] [State of the Art on Neural Rendering](https://arxiv.org/abs/2004.03805)
-
 [2] [Voxnet: A 3D convolutional neural network for real-time object recognition](https://www.ri.cmu.edu/pub_files/2015/9/voxnet_maturana_scherer_iros15.pdf)
-
 [3] [A point set generation network for 3D object reconstruction from a single image](https://arxiv.org/abs/1612.00603)
 [4] [AtlasNet: A Papier-Mâché Approach to Learning 3D Surface Generation](https://arxiv.org/abs/1802.05384)
 [5] [Occupancy Networks: Learning 3D Reconstruction in Function Space](https://arxiv.org/pdf/1812.03828.pdf)
