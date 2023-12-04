@@ -258,7 +258,9 @@ TODO: add the backpropagation equations
 ### References
 
 [1] [State of the Art on Neural Rendering](https://arxiv.org/abs/2004.03805)
+
 [2] [Voxnet: A 3D convolutional neural network for real-time object recognition](https://www.ri.cmu.edu/pub_files/2015/9/voxnet_maturana_scherer_iros15.pdf)
+
 [3] [A point set generation network for 3D object reconstruction from a single image](https://arxiv.org/abs/1612.00603)
 [4] [AtlasNet: A Papier-Mâché Approach to Learning 3D Surface Generation](https://arxiv.org/abs/1802.05384)
 [5] [Occupancy Networks: Learning 3D Reconstruction in Function Space](https://arxiv.org/pdf/1812.03828.pdf)
