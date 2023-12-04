@@ -14,15 +14,18 @@ tags:
   1. [Introduction](#introduction)
   2. [Definition](#definition)
   3. [Representations](#representations)
-      - [2.1 Voxel](#21-voxel)
-      - [2.2 Point](#22-point)
-      - [2.3 Mesh](#23-mesh)
-      - [2.4 Occupancy Networks](#24-occupancy-networks)
-          - [2.4.1 Appearance, Geometry, and Surfaces properties](#241-appearance-geometry-and-surfaces-properties)
-          - [2.4.2 Convolutional Occupancy Networks](#242-convolutional-occupancy-networks)
+    - [Voxel](#voxel)
+    - [Point](#point)
+    - [Mesh](#mesh)
+    - [Occupancy Networks](#occupancy-networks)
+      - [Appearance, Geometry, and Surfaces properties](#appearance-geometry-and-surfaces-properties)
+      - [Convolutional Occupancy Networks](#convolutional-occupancy-networks)
   4. [Mesh Extraction](#mesh-extraction)
-  5. [Neural Rendering](#neural-rendering)
+    - [Marching Cubes](#marching-cubes)
+    - [Multiresolution Iso-Surface Extraction (MISE)](#multiresolution-iso-surface-extraction-mise)
+  5. [Differentiable Volumetric Rendering](#differentiable-volumetric-rendering)
   6. [References](#references)
+
   
 ## Introduction
 
@@ -52,19 +55,19 @@ Learning-based approaches for 3D reconstruction have gained popularity for its r
 </div>
 </p>
 
-### 2.1 Voxel
+### Voxel
 
 Voxel are easy to process by neural network and commonly used in generative 3D tasks, by discretizing  the space into a set of 3D voxel grids. However, Due to its cubic memory \(O(n^3)\), the voxels representations are limited to small resolutions of the underlying 3D grid. [2]
 
-### 2.2 Point
+### Point
 
 As an alternative to the voxel representation, the output can be represented as a set of 3D point clouds.However, the point representation doesn't preserve the model connectivity and topology, hence require a post-processing steps to extract 3D mesh. The point representation is also limited by the number of points, which affects the resolution of the final model. [3]
 
-### 2.3 Mesh
+### Mesh
 
 Representing the output as a set of triangles (vertices and faces) is a very complicated structure that requires reference template from the same object class. Yet, the approach is still limited by the memory requirements and the resolution of the mesh. [4]
 
-### 2.4 Occupancy Networks
+### Occupancy Networks
 
 the *Occupancy Networks* implicitly represents the 3D surface as a decision boundary of a nonlinear classifier, and for every point \(\mathbf{p} \in \mathbb{R}^3\) in the 3D space, the network predicts the probability of the point being inside the object. The occupancy function is defined as:
 
@@ -96,7 +99,7 @@ $$
 
 - In practice, we sample the 3D points uniformly inside the bounding box of the object.
 
-#### 2.4.1 Appearance, Geometry, and Surfaces properties
+#### Appearance, Geometry, and Surfaces properties
 
 The implicit representation can be extended to have more objects properties and reasoning, such as the surface lightening and the view point. The occupancy network can conditioned by the viewing direction \(v\) and light location \(l\) for any 3D point \(p\), for each input tuple \((p,v,l)\), we can write the *occupancy network function* as:
 
@@ -119,7 +122,7 @@ $$
 L(I, \hat{I}) = \left \| I - \hat{I}   \right \|_1
 $$
 
-#### 2.4.2 Convolutional Occupancy Networks
+#### Convolutional Occupancy Networks
 
 > Large-scale representation learning for 3D scenes ?
 
@@ -190,7 +193,7 @@ $$
 
 The mesh extraction is a post-processing step that extracts the 3D mesh from the occupancy network.
 
-### 3.1 Marching Cubes
+### Marching Cubes
 
 The marching cubes algorithm is a method for extracting a polygonal mesh of an isosurface from a 3D scalar field. The iso-surface is formed by connecting the vertices of the cubes that are intersected by the iso-surface.
 
@@ -202,7 +205,7 @@ Algorithm:
 - Based on the triangulations, We generate polygons for each cube  and we merge the polygons to form the final mesh.
 - We optimize the mesh by removing the duplicated vertices and edges.
 
-### 3.2 Multiresolution Iso-Surface Extraction (MISE)
+### Multiresolution Iso-Surface Extraction (MISE)
 
 MISE is a method that incrementally building an octree to extract high resolution meshes from the occupancy function.
 
@@ -256,9 +259,9 @@ TODO: add the backpropagation equations
 
 ## References
 
-[1] [State of the Art on Neural Rendering](https://arxiv.org/abs/2004.03805)
-[2] [Voxnet: A 3D convolutional neural network for real-time object recognition](https://www.ri.cmu.edu/pub_files/2015/9/voxnet_maturana_scherer_iros15.pdf)
-[3] [A point set generation network for 3D object reconstruction from a single image](https://arxiv.org/abs/1612.00603)
-[4] [AtlasNet: A Papier-Mâché Approach to Learning 3D Surface Generation](https://arxiv.org/abs/1802.05384)
-[5] [Occupancy Networks: Learning 3D Reconstruction in Function Space](https://arxiv.org/pdf/1812.03828.pdf)
-[6] [Marching Cubes: A High Resolution 3D Surface Construction Algorithm](https://dl.acm.org/doi/10.1145/37402.37422)
+- [1] [State of the Art on Neural Rendering](https://arxiv.org/abs/2004.03805)
+- [2] [Voxnet: A 3D convolutional neural network for real-time object recognition](https://www.ri.cmu.edu/pub_files/2015/9/voxnet_maturana_scherer_iros15.pdf)
+- [3] [A point set generation network for 3D object reconstruction from a single image](https://arxiv.org/abs/1612.00603)
+- [4] [AtlasNet: A Papier-Mâché Approach to Learning 3D Surface Generation](https://arxiv.org/abs/1802.05384)
+- [5] [Occupancy Networks: Learning 3D Reconstruction in Function Space](https://arxiv.org/pdf/1812.03828.pdf)
+- [6] [Marching Cubes: A High Resolution 3D Surface Construction Algorithm](https://dl.acm.org/doi/10.1145/37402.37422)
