@@ -24,13 +24,12 @@ tags:
     - [Marching Cubes](#marching-cubes)
     - [Multiresolution Iso-Surface Extraction (MISE)](#multiresolution-iso-surface-extraction-mise)
   5. [Differentiable Volumetric Rendering](#differentiable-volumetric-rendering)
-  6. [References](#references)
+  6. [Neural Radiance Fields](#neural-radiance-fields)
+  7. [References](#references)
 
-  
 ## Introduction
 
 In this tutorial, we will approach the Neural Implicit Representation principals and its applications in computer vision, graphics, and  robotics.
-
 
 ## Definition
 
@@ -49,7 +48,6 @@ Learning-based approaches for 3D reconstruction have gained popularity for its r
 <div align="center">
   <img src="/images/NIR/nir_representations.png" alt="NIR">
 </div>
-
 
 ### Voxel
 
@@ -71,7 +69,6 @@ $$
 \mathbf{o} :\mathbb{R}^3 \rightarrow [0, 1]
 $$
 
-
 The occupancy function is approximated by a deep neural network $f_\theta$ with parameters $\theta$ that takes an observation $\mathbf{x} \in X$ as input condition (ex. image, point clouds,...), and it has a function from $\mathbf{p} \in \mathbb{R}^3$ to $\mathbb{R}$ as an occupancy probability.
 
 For each input pair $(p,x)$, we can write the *occupancy network function* as:
@@ -83,7 +80,6 @@ $$
 <div align="center">
   <img src="/images/NIR/nir_arch.png" alt="NIR">
 </div>
-
 
 The advantage of the occupancy network is a continuous representation with an infinite resolution, the representation is not restricted to a specific class as in the mesh representation and it has a low memory footprint.
 
@@ -241,9 +237,85 @@ We define the photometric loss function between the input image $I$, and the ren
 $$
 L(\hat{I}, I) = \sum_{u} \left \| \hat{I_u} - I_u  \right \|_1
 $$
-$u$ denotes the pixel location in the image.
 
-TODO: add the backpropagation equations
+- $u$ denotes the pixel location in the image.
+
+For a camera located at $r_0$, we can render the image $\hat{I}$ at pixel location $u$ by casting a ray from the camera center $r_0$ through the pixel location $u$, and we compute the intersection point $\hat{p}$ with the surface $f_\theta(p) = \tau$.
+
+For any pixel $u$, this ray can written as $\hat{p} = r_0 + d \cdot w$, where $d$ is the depth value. Since $\hat{p}$ depends on $\theta$. The partial derivative of $\hat{p}$ with respect to $\theta$ can be computed using the chain rule:
+
+$$
+\frac{\partial \hat{p}}{\partial \theta} = w \cdot \frac{\partial \hat{d}}{\partial \theta}
+$$
+
+Applying the chain rule to the photometric loss function $L$ , we can compute the partial derivative of the loss function with respect to $\theta$ as:
+
+$$
+\frac{\partial L}{\partial \theta} = \sum_{u} \frac{\partial L}{\partial \hat{I_u}} \cdot \frac{\partial \hat{I_u}}{\partial \theta}
+$$
+
+$$
+\frac{\partial \hat{I_u}}{\partial \theta} =
+\frac{\partial t_{\theta}(\hat{p})}{\partial \theta} + \frac{\partial t_{\theta}(\hat{p})}{\partial \hat{p}} \cdot \frac{\partial \hat{p}}{\partial \theta}
+$$
+
+Solving for $\frac{\partial \hat{p}}{\partial \theta}$, we can write the partial derivative of the loss function with respect to $\theta$ as:
+
+$$
+\frac{\partial \hat{p}}{\partial \theta} = w \cdot \frac{\partial \hat{d}}{\partial \theta} = - w (\frac{\partial f_\theta(\hat{p})}{\partial \theta} \cdot w)^{-1} \cdot \frac{\partial f_\theta(\hat{p})}{\partial \theta}
+$$
+
+Calculating the gradient of the surface depth $\hat{d}$ with reference to the network parameters $\theta$ only involves calculating the gradient of $f_{\theta}$ at $\hat{p}$ with reference to  the network parameters $\theta$ and the surface point $\hat{p}$.
+
+## Neural Radiance Fields
+
+> Can we render a novel photo-realistic view of the scene from an implicit representation ?
+
+<div align="center">
+  <img src="/images/NIR/nerf_arch.png" alt="NIR">
+</div>
+
+Neural Radiance Fields (*NeRF*) is a method for synthesizing novel views of a scene from a sparse set of input views.
+
+NeRF maps a 3D spatial location $\mathbf{x} \in \mathbb{R}^3$ and a 2D viewing direction $\mathbf{d} \in \mathbb{R}^2$ to color $\mathbf{c} \in \mathbb{R}^3$ and density $\sigma \in \mathbb{R}$, as:
+
+$f: (\mathbf{x}, \mathbf{d}) \rightarrow (\mathbf{c}, \sigma)$
+
+- Density $\sigma$ describes the opacity of a 3D point in the scene.
+- $d$ represents the viewing direction, which is the direction from the camera center to the 3D point.
+
+Unlike to DVR, NeRF doesn't evaluate the color on the ray at the surface, instead it evaluates the color/density at multiple points along the ray by integrating the color/density along the ray.
+
+<div align="center">
+  <img src="/images/NIR/nerf_ray.png" alt="NIR">
+</div>
+
+The rendering equation for a ray $r(t) = r_0 + t \cdot d$ is defined as:
+
+$$
+C \approx \sum_{i=1}^{N} T_i \cdot \sigma_i \cdot C_i
+$$
+
+- $ci$ is the color of the $i$-th point along the ray, and $T_i$ is the weight.
+
+- Alpha $\alpha_{i}$ is the accumulated density along the ray, and it is defined as:
+
+$$
+\alpha_{i} = 1 - \exp^{(-\sigma_{i} \cdot \Delta t)}
+$$
+
+**NeRF Training**: We sample a set of rays from the input images, and we optimize the network parameters $\theta$ to minimize the reconstruction loss function:
+
+$$
+  L(\theta) = min_{\theta} \sum_{i=1}^{N} \left \| \hat{C_i} - C_i  \right \|_2^2 
+$$
+
+- The sampling strategy is important for the training, we sample the rays from the input images, and we sample the points along the ray using a coarse-to-fine strategy, where we sample more points near the surface.
+
+- NeRF model is a view dependent model, where the color changes with the viewing direction.
+
+- Position encoding, such as fourier features, is used to encode the 3D spatial location $\mathbf{x}$ and the 2D viewing direction $\mathbf{d}$, helps the model to represent higher frequency details, in low dimensional space (MLP).
+
 
 ## References
 
