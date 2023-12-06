@@ -6,6 +6,8 @@ tags:
   - Neural Implicit Representation
   - 3D reconstruction
   - Deep Learning
+  - Volume Rendering
+  - NeRF
 ---
 
 
