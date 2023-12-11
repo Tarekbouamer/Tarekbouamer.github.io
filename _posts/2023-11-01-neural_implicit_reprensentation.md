@@ -10,6 +10,7 @@ tags:
   - NeRF
 ---
 
+## *Coordinate-based Networks*
 
 ## Table of Contents
 
@@ -349,6 +350,20 @@ class NeRF(nn.Module):
 $$
   L(\theta) = min_{\theta} \sum_{i=1}^{N} \left \| \hat{C_i} - C_i  \right \|_2^2 
 $$
+
+```python
+# loss
+def nerf_loss(sigma, color, target_color):
+    # Compute the accumulated density along the ray
+    alpha = 1 - torch.exp(-sigma * delta_t)
+
+    # Compute the predicted color along the ray
+    pred_color = torch.exp(-alpha * sigma) * color
+
+    # Compute the reconstruction loss
+    loss = torch.mean(torch.sum((pred_color - target_color) ** 2, dim=-1))
+    return loss
+```
 
 - The sampling strategy is important for the training, we sample the rays from the input images, and we sample the points along the ray using a coarse-to-fine strategy, where we sample more points near the surface.
 
