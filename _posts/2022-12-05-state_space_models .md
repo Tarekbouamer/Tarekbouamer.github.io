@@ -8,7 +8,6 @@ tags:
   - Mamba
 ---
 
-
 # Table of Contents
 
   1. [Introduction](#introduction)
@@ -70,6 +69,24 @@ $$
 
 
 We can say that SSM model maps a 1-D input signal $ u(t) $ to an $ p\times D $ latent state $ x(t) $, which is then mapped to an $ q \times D $ output signal $ y(t) $.
+
+### HiPPO: High-order Polynomial Projection Operators
+
+State space representation has an exponential nature which makes the SSMs suffer from the exponential scaling of the gradient through long sequences and impractical for long-range dependencies.
+
+To address this issue the authors leveraged HiPPO theory to allow the state $ x(t) $ to memorize the the input $ u(t) $ through the state transition matrix $ A $, named **HiPPO Matrix**. At any time $t$, the current state $x(t)$ can be used to approximately reconstruct the entire input $ u $ up to time $ t $.
+
+$$
+\text{A HiPPO matrix} = - \left\{
+\begin{array}{ll}
+(2n + 1)^{1/2} (2k + 1)^{1/2} && \text{if } n > k \\
+n + 1 && \text{if } n = k \\
+0 && \text{if } n < k
+\end{array}
+\right.
+$$
+
+For the MNIST benchmark the matrix improved the performance from 60 % to 98 % accuracy 🎉.
 
 ### Discrete-Time SSMs
 
@@ -175,6 +192,39 @@ y_k &= \bar{K} * u
 $$
 
 where \( \bar{K} \) represents **the SSM convolutional kernel**.
+
+## Methods
+
+### Diagolnalization of the HiPPO Matrix
+
+We have shown that the discrete-SSM, has a repeated multiplication of the matrix \( \bar{A} \) which requires a complexity of $ O(N^{2} L) $ and a memory of $ O(N L) $, where \( N \) is the number of states and \( L \) is the length of the sequence.
+
+Assuming that $ x = V \hat{x} $, the state space model can be diagonalized as:
+
+$$
+\begin{aligned}
+\dot{\hat{x}} &= V^{-1}AV  \hat{x}  + V^{-1} B u \\
+y &= C V \hat{x}
+\end{aligned}
+$$
+
+Thus, for a diagonal matrix \( A \), the state space model can be solved in $ O(N L) \log^{2}{N+L} $, as $\bar{K}$ is a Vendermonde matrix, leading to a faster computation. Unfortunately, the diagonalization of the HiPPO does not work due to numerical issues.
+
+
+### Normal Plus Low-Rank (NPLR) Decomposition
+
+Although the HiPPO matrix is not normal, it can be decomposed into a normal and a low-rank matrix. However, unlike the diagonal matrices, the sum is slow.
+
+The authors applied three new techniques to overcome the latter issue:
+
+$$
+\begin{aligned}
+\text{HiPPO} = \text{Normal} + \text{Low-Rank}
+\end{aligned}
+$$
+
+where the Normal part is a diagonal matrix and the Low-Rank part is a low-rank matrix. The NPLR decomposition allows for a more efficient computation of the HiPPO matrix, reducing the complexity to $ O(N L) \log^{2}{N+L} $.
+
 
 ## References
 
