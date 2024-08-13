@@ -123,8 +123,62 @@ L_{t} = \mathbb{E}_{x_{0},t,\epsilon} \left[ \frac{1}{2 ||\sigma_{\theta}(x_{t},
 
 Thus, instead of directly predicting the mean of the Gaussian distribution, we predict the noise \( \epsilon_{t} \) that is added to the input \( x_{0} \) to generate the output \( x_{t} \) at each step \( t \).
 
-<!-- <div align="center">
+<div align="center">
   <img src="/images/DM/training.png" alt="Training Diffusion Models illustration">
-</div> -->
+</div>
+
+### Parametrisation
+
+The forward variance \( \beta_{t} \) can be set as a constant or determined by a schedule over time \( T \).
+
+**Linear**: In this approach, the variance increases linearly with \( t \), forming a sequence of constants \( \beta_{1}, \beta_{2}, \ldots, \beta_{T} \), where \( \beta_{1} < \beta_{2} < \ldots < \beta_{T} \). These values should be chosen relatively small compared to the normalized input \( x_{0} \in [-1, 1] \). Common choices include \( \beta_{1} = 10^{-4} \) and \( \beta_{T} = 0.02 \).
+
+**Cosine**: An improvement over the linear schedule is the use of a cosine-based variance schedule, which is defined by the following equations:
+
+\(\bar{\alpha}_{t} = \frac{f(t)}{f(0)}, \quad f(t) = \cos{\left(\frac{t/T + s}{1 + s} \cdot \frac{\pi}{2}\right)}^2, \quad \beta_{t} = \text{clip}\left(1 - \frac{\bar{\alpha}_{t}}{\bar{\alpha}_{t-1}}, 0.999\right)\)
+
+## Model Architectures
+
+Diffusion Models can be implemented using various neural network architectures, each with its unique strengths and applications. The common architectures include U-Net and transformers.
+
+### U-Net Architecture
+
+The U-Net architecture is commonly used due to its ability to handle inputs and outputs of the same spatial size. The U-Net consists of:
+
+- **Downsampling**: This part reduces the spatial dimensions of the input while increasing the number of feature channels. It involves repeated 3x3 convolutions followed by ReLU activations and 2x2 max pooling with stride 2.
+
+- **Upsampling**: This component reconstructs the original spatial dimensions from the compressed representation. It includes upsampling of the feature maps followed by 2x2 convolutions.
+
+- **Skips**: These connections link corresponding layers from the downsampling and upsampling branch. They concatenate features from the encoder with the decoder, preserving high-resolution details.
+
+The orignal implementation of the U-Net in diffusion models uses resnet blocks with diffusion time steps embedding with swish non-linearity, and group normalization. Additionaly, attention block was introduced.
+
+### Transformer-Based Models
+
+<!-- TODO: add transformer section -->
+
+## Conditional Generation
+
+Diffusion Models can be extended to perform conditional generation, where the output is conditioned on additional information, such as text descriptions or class labels. This allows for more precise control over the generated data and enables the model to produce outputs that align with the given conditions.
+
+In this approach, an image embedding is incorporated into the diffusion process to guide the generation of images based on a specific class or category. Mathematically, the conditional distribution of \( x_t \) given \( x_{t-1} \) and the condition \( y \) is defined as:
+
+\[
+p_{\theta}(x_{0:T} \mid y) = p(x_{T})\prod_{t=1}^{T} p_{\theta}(x_{t-1} \mid x_{t}, y)
+\]
+
+\[
+p_{\theta}(x_{t-1} \mid x_{t}, y) = \mathcal{N}\left(x_{t-1}; \mu_{\theta}(x_t, t, y), \sigma_{\theta}(x_t, t, y)\right)
+\]
+
+### Classifier Guided Diffusion
+
+We can train  a classifer \( f_{\phi} (y \mid x_{t}, t)\) on a noisy image \(x_{t}\) to guide the diffusion process towards a condition information \(y\) using the gradient of log  \(\nabla_{x_{t}} \log f_{\phi} (y \mid x_{t}, t)\).
+
+We can write the loss function as:
+
+
+### Classifier-Free Guided Diffusion
+
 
 ## References
