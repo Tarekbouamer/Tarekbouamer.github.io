@@ -1,6 +1,6 @@
 ---
 title: 'State Space Models (SSM)'
-date: 2022-12-05
+date: 2024-07-05
 permalink: /posts/SSM/
 tags:
   - Machine Learning

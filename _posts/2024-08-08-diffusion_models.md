@@ -1,6 +1,6 @@
 ---
 title: 'Diffusion Models: A Comprehensive Guide'
-date: 2023-11-01
+date: 2024-08-08
 permalink: /posts/DM/
 tags:
   - Diffusion Models

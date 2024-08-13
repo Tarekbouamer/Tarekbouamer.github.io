@@ -1,6 +1,6 @@
 ---
 title: 'Neural Implicit Representation'
-date: 2023-11-01
+date: 2024-03-01
 permalink: /posts/NIR/
 tags:
   - Neural Implicit Representation
