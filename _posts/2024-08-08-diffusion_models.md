@@ -49,28 +49,89 @@ The mathematical foundation of Diffusion Models is based on the concept of gener
 
 The forward diffusion process is an essential component of Diffusion Models, where a clean data sample is progressively transformed into a noisier version over multiple steps.
 
-Given a data sample $x_0$ with a distribution $x_0 \sim q(x_0)$, the forward diffusion process generates a sequence of increasingly noisy versions of this data by adding Gaussian noise at each of $T$ steps. The noise introduced at each step $t$ is characterized by a variance parameter $\beta_t \in [0, 1]$. The conditional distribution of $x_t$ given $x_{t-1}$ is defined as:
+Given a data sample \( x_0 \) with a distribution \( x_0 \sim q(x_0) \), the forward diffusion process generates a sequence of increasingly noisy versions of this data by adding Gaussian noise at each of \( T \) steps. The noise introduced at each step \( t \) is characterized by a variance parameter \( \beta_t \in [0, 1] \). The conditional distribution of \( x_t \) given \( x_{t-1} \) is defined as:
 
-$$
+\[
 q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1-\beta_t} \cdot x_{t-1}, \beta_t \mathbf{I}\right)
-$$
+\]
 
-Here, $q(x_t \mid x_{t-1})$ represents a Gaussian distribution where $x_t$ has a mean of $\sqrt{1-\beta_t} \cdot x_{t-1}$ and a variance of $\beta_t \mathbf{I}$.
+Here, \( q(x_t \mid x_{t-1}) \) represents a Gaussian distribution where \( x_t \) has a mean of \( \sqrt{1-\beta_t} \cdot x_{t-1} \) and a variance of \( \beta_t \mathbf{I} \). As \( t \) increases, \( x_0 \) gradually loses its original features. In the limit as \( t \) approaches infinity \( (t \to \infty) \), \( x_T \) becomes an isotropic Gaussian distribution:
 
-The distribution of the final noisy sample $x_T$ given the initial data $x_0$ can be expressed as:
+\[
+x_T \sim \mathcal{N}(0, \mathbf{I})
+\]
 
-$$
+The distribution of the final noisy sample \( x_T \) given the initial data \( x_0 \) can be expressed as:
+
+\[
 q(x_{1:T} \mid x_0) = \prod_{t=1}^{T} q(x_t \mid x_{t-1})
-$$
+\]
 
-This equation describes a Markov chain, where the distribution of $x_t$ depends solely on the previous state $x_{t-1}$. To simplify the notation, we define $\alpha_t = 1 - \beta_t$ and $\bar{\alpha}_t = \prod_{i=1}^{t} \alpha_i$. Using these definitions, the distribution of $x_t$ given $x_0$ can be rewritten as:
+This equation describes a Markov chain, where the distribution of \( x_t \) depends solely on the previous state \( x_{t-1} \). To simplify the notation, we define \( \alpha_t = 1 - \beta_t \) and \( \bar{\alpha}_t = \prod_{i=1}^{t} \alpha_i \). Using these definitions, we can express \( x_t \) as:
 
-$$
+\[
+x_t = \sqrt{\alpha_t} x_{t-1} + \sqrt{1-\alpha_t} \epsilon_{t-1}
+\]
+
+\[
+= \sqrt{\alpha_t \alpha_{t-1}} x_{t-2} + \sqrt{1-\alpha_t \alpha_{t-1}} \bar{\epsilon}_{t-2}
+\]
+
+\[
+\vdots
+\]
+
+\[
+= \sqrt{\bar{\alpha}_t} x_0 + \sqrt{1-\bar{\alpha}_t} \epsilon
+\]
+
+Thus, the distribution of \( x_t \) given \( x_0 \) can be rewritten as:
+
+\[
 q(x_t \mid x_0) = \mathcal{N}\left(x_t; \sqrt{\bar{\alpha}_t} \cdot x_0, (1 - \bar{\alpha}_t) \mathbf{I}\right)
-$$
+\]
+
+
+
 
 ### Inverse Diffusion
 
-The inverse diffusion process is the core generative mechanism in Diffusion Models. It involves reversing the forward diffusion process to gradually transform a noisy data sample back into a clean one.
+The inverse diffusion process is the core generative mechanism in Diffusion Models. If we can reverse the process \( q(x_{t-1} | x_{t})\), we will be able to re-create the true input data \( x_0 \), knowing that \( q(x_{t-1} | x_{t}) \) is also a Gaussian.
+
+Unfortunately, the estimation of \( q(x_{t-1} | x_{t}) \) is intracable, so we need to approximate the process by using a learned model \( p_{\theta} \) to estimate the reverse process, where :
+
+\[
+   p_{\theta}(x_{t-1} | x_t) = \mathcal{N}\left(x_{t-1}; \mu_{\theta}(x_t, t), \sigma_{\theta}(x_t, t)\right)
+\]
+
+The parameters \( \mu_{\theta}(x_t, t) \) and \( \sigma_{\theta}(x_t, t) \) are learned by the model, and they represent the mean and standard deviation of the Gaussian distribution at each step \( t \).
+
+
+### Training Diffusion Models
+
+Training Diffusion Models involves optimizing the parameters of the model. Specifically, we aim to train \( \mu_{\theta} \) to predict the mean \( \mu_{t} \) of the reverse process, given by:
+
+\[
+\mu_{t} = \frac{1}{\sqrt{\alpha_{t}}}\left(x_{t} - \frac{1-\alpha_{t}}{\sqrt{1-\bar{\alpha}_{t}}} \epsilon_{t}\right)
+\]
+
+After a sequence of simplifications, which will be detailed in the next section, the loss function can be expressed as:
+
+\[
+L_{t} = \mathbb{E}_{x_{0},t,\epsilon} \left[ \frac{1}{2 ||\sigma_{\theta}(x_{t},t)||_{2}^{2}} ||u_{t} - \mu_{\theta}(x_{t},t)||_{2}^{2}\right]
+\]
+
+\[
+= \mathbb{E}_{x_{0},t,\epsilon} \left[ \frac{\beta_{t}^{2}}{2 \alpha_{t} (1-\bar{\alpha}_{t}) ||\sigma_{\theta}||_{2}^{2}} ||\epsilon_{t}-\epsilon_{\theta}(\sqrt{\bar{\alpha}_{t}}x_{0} + \sqrt{1-\bar{\alpha}_{t}}\epsilon_{t})||^{2} \right]
+\]
+
+Thus, instead of directly predicting the mean of the Gaussian distribution, we predict the noise \( \epsilon_{t} \) that is added to the input \( x_{0} \) to generate the output \( x_{t} \) at each step \( t \).
+
+
+<!-- <div align="center">
+  <img src="/images/DM/training.png" alt="Training Diffusion Models">
+</div> -->
+
+
 
 ## References
