@@ -1,7 +1,7 @@
 ---
 title: 'Diffusion Models: A Comprehensive Guide'
 date: 2024-08-08
-permalink: /posts/DM/
+permalink: /posts/diffusion-models/
 tags:
   - Diffusion Models
   - Generative Models
@@ -55,7 +55,7 @@ Given a data sample \( x_0 \) with a distribution \( x_0 \sim q(x_0) \), the for
 q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1-\beta_t} \cdot x_{t-1}, \beta_t \mathbf{I}\right)
 \]
 
-Here, \( q(x_t \mid x_{t-1}) \) represents a Gaussian distribution where \( x_t \) has a mean of \( \sqrt{1-\beta_t} \cdot x_{t-1} \) and a variance of \( \beta_t \mathbf{I} \). As \( t \) increases, \( x_0 \) gradually loses its original features. In the limit as \( t \) approaches infinity \( (t \to \infty) \), \( x_T \) becomes an isotropic Gaussian distribution:
+Here, \( q(x_t \mid x_{t-1}) \) represents a Gaussian distribution where \( x_t \) has a mean of \( \sqrt{1-\beta_t} \cdot x_{t-1} \) and a variance of \( \beta_t \mathbf{I} \). As \( t \) increases, \( x_0 \) gradually loses its original features. In the limit as \( t \to \infty \), \( x_T \) becomes an isotropic Gaussian distribution:
 
 \[
 x_T \sim \mathcal{N}(0, \mathbf{I})
@@ -91,21 +91,17 @@ Thus, the distribution of \( x_t \) given \( x_0 \) can be rewritten as:
 q(x_t \mid x_0) = \mathcal{N}\left(x_t; \sqrt{\bar{\alpha}_t} \cdot x_0, (1 - \bar{\alpha}_t) \mathbf{I}\right)
 \]
 
-
-
-
 ### Inverse Diffusion
 
-The inverse diffusion process is the core generative mechanism in Diffusion Models. If we can reverse the process \( q(x_{t-1} | x_{t})\), we will be able to re-create the true input data \( x_0 \), knowing that \( q(x_{t-1} | x_{t}) \) is also a Gaussian.
+The inverse diffusion process is the core generative mechanism in Diffusion Models. If we can reverse the process \( q(x_{t-1} \mid x_t) \), we will be able to re-create the true input data \( x_0 \), knowing that \( q(x_{t-1} \mid x_t) \) is also a Gaussian.
 
-Unfortunately, the estimation of \( q(x_{t-1} | x_{t}) \) is intracable, so we need to approximate the process by using a learned model \( p_{\theta} \) to estimate the reverse process, where :
+Unfortunately, the estimation of \( q(x_{t-1} \mid x_t) \) is intractable, so we need to approximate the process by using a learned model \( p_{\theta} \) to estimate the reverse process, where:
 
 \[
-   p_{\theta}(x_{t-1} | x_t) = \mathcal{N}\left(x_{t-1}; \mu_{\theta}(x_t, t), \sigma_{\theta}(x_t, t)\right)
+p_{\theta}(x_{t-1} \mid x_t) = \mathcal{N}\left(x_{t-1}; \mu_{\theta}(x_t, t), \sigma_{\theta}(x_t, t)\right)
 \]
 
 The parameters \( \mu_{\theta}(x_t, t) \) and \( \sigma_{\theta}(x_t, t) \) are learned by the model, and they represent the mean and standard deviation of the Gaussian distribution at each step \( t \).
-
 
 ### Training Diffusion Models
 
@@ -118,7 +114,7 @@ Training Diffusion Models involves optimizing the parameters of the model. Speci
 After a sequence of simplifications, which will be detailed in the next section, the loss function can be expressed as:
 
 \[
-L_{t} = \mathbb{E}_{x_{0},t,\epsilon} \left[ \frac{1}{2 ||\sigma_{\theta}(x_{t},t)||_{2}^{2}} ||u_{t} - \mu_{\theta}(x_{t},t)||_{2}^{2}\right]
+L_{t} = \mathbb{E}_{x_{0},t,\epsilon} \left[ \frac{1}{2 ||\sigma_{\theta}(x_{t},t)||_{2}^{2}} ||\mu_{t} - \mu_{\theta}(x_{t},t)||_{2}^{2}\right]
 \]
 
 \[
@@ -127,11 +123,8 @@ L_{t} = \mathbb{E}_{x_{0},t,\epsilon} \left[ \frac{1}{2 ||\sigma_{\theta}(x_{t},
 
 Thus, instead of directly predicting the mean of the Gaussian distribution, we predict the noise \( \epsilon_{t} \) that is added to the input \( x_{0} \) to generate the output \( x_{t} \) at each step \( t \).
 
-
 <!-- <div align="center">
-  <img src="/images/DM/training.png" alt="Training Diffusion Models">
+  <img src="/images/DM/training.png" alt="Training Diffusion Models illustration">
 </div> -->
-
-
 
 ## References
