@@ -10,7 +10,8 @@ tags:
   - NeRF
 ---
 
-## *Coordinate-based Networks*
+
+_Welcome to this guide on Neural Implicit Representations (NIR), an advanced approach to 3D reconstruction and graphics. Explore concepts like implicit functions, occupancy networks, volumetric rendering, and Neural Radiance Fields (NeRF), enabling high-resolution 3D modeling._
 
 ## Table of Contents
 
@@ -309,7 +310,7 @@ $$
 $$
 \alpha_{i} = 1 - \exp^{(-\sigma_{i} \cdot \Delta t)}
 $$
-**NeRF Model**: 
+**NeRF Model**:
 
 ```python
 class NeRF(nn.Module):
@@ -348,7 +349,7 @@ class NeRF(nn.Module):
 **NeRF Training**: We sample a set of rays from the input images, and we optimize the network parameters $\theta$ to minimize the reconstruction loss function:
 
 $$
-  L(\theta) = min_{\theta} \sum_{i=1}^{N} \left \| \hat{C_i} - C_i  \right \|_2^2 
+  L(\theta) = min_{\theta} \sum_{i=1}^{N} \left \| \hat{C_i} - C_i  \right \|_2^2
 $$
 
 ```python

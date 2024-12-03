@@ -8,6 +8,7 @@ tags:
   - Machine Learning
   - Deep Learning
 ---
+_Welcome to this guide on Diffusion Models, a groundbreaking class of generative models that create high-quality data by refining noisy inputs. This blog covers their foundations, architectures, training, advanced techniques like conditional and latent diffusion, and applications ranging from image editing to medical imaging, offering a concise overview of their impact on machine learning._
 
 ## Table of Contents
 
@@ -38,7 +39,7 @@ tags:
     - [Image Editing](#image-editing)
     - [Video Generation](#video-generation)
     - [Medical Inverse Problems](#medical-inverse-problems)
-    - [3D Shape Generation](#3d-shape-generation) 
+    - [3D Shape Generation](#3d-shape-generation)
 8. [Summary](#summary)
 9. [References](#references)
 
@@ -170,12 +171,10 @@ The forward variance $ \beta_{t} $ can be set as a constant or determined by a s
 
 $\bar{\alpha}_{t} = \frac{f(t)}{f(0)}, \quad f(t) = \cos{\left(\frac{t/T + s}{1 + s} \cdot \frac{\pi}{2}\right)}^2, \quad \beta_{t} = \text{clip}\left(1 - \frac{\bar{\alpha}_{t}}{\bar{\alpha}_{t-1}}, 0.999\right)$
 
-
 <div align="center">
   <img src="/images/DM/linear_vs_cosine_schedular.png" alt="Linear vs Cosine Schedule illustration">
   <img src="/images/DM/linear_vs_cosine_schedular_plot.png" alt="Linear vs Cosine Schedule Plot">
 </div>
-
 
 ## Model Architectures
 
@@ -339,7 +338,6 @@ $$
 
 Where $Q = W_q \cdot \phi(z)$, $K = W_k \cdot \tau_{\theta}(y)$, $V = W_v \cdot \tau_{\theta}(y)$
 
-
 $\phi(z) \in \mathbb{R}^{N \times d_{\epsilon}}$
 $\tau_{\theta}(y) \in \mathbb{R}^{M \times d_{r}}$
 $ W_q \in \mathbb{R}^{d \times d_{\epsilon}}$
@@ -352,20 +350,18 @@ $$
 L = E_{G(x), \epsilon ~_{\mathcal{N}(0,1)},t} [ || \epsilon - \epsilon_{\theta}(z_{t}, t, y) ||_{2}^2]
 $$  
 
-
 <div align="center">
   <img src="/images/DM/stable_diffusion.png" alt="Latent Diffusion Models illustration">
 </div>
 
-
 **Regularization**: The latent diffusion model can be regularized to prevent high variance in the latent space.
+
 - KL-reg: a slight KL-penality on the latent space towards standard normal.
 - VQ-reg: uses vector quantization layer within the decoder.
 
-
 ## Applications
 
-### GLIDE 
+### GLIDE
 
 ### DALL-E2
 
@@ -374,7 +370,6 @@ $$
 ### Stable Diffusion
 
 ### Super-Resolution
-
 
 ### Image Translation
 
@@ -389,6 +384,5 @@ $$
 ### 3D Shape Generation
 
 ## Summary
-
 
 ## References

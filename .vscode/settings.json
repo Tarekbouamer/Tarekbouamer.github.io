@@ -1,8 +1,10 @@
 {
     "cSpell.words": [
         "convolutional",
+        "keypoints",
         "representaions",
         "Voxel",
         "Voxels"
-    ]
+    ],
+    "cSpell.enabled": true
 }
