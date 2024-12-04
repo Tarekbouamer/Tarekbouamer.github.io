@@ -7,8 +7,18 @@ tags:
   - State Space Models
   - Mamba
 ---
-
-_Welcome to this guide on State Space Models (SSMs), exploring their efficiency in modeling long-range dependencies, the S4 model, and key techniques._
+<div style="display: flex; align-items: center; gap: 20px;">
+    <div style="flex: 1;">
+        <p>
+            <em>
+                Welcome to this guide on State Space Models (SSMs), exploring their efficiency in modeling long-range dependencies, the S4 model, and key techniques.
+            </em>
+        </p>
+    </div>
+    <div style="flex: 1; text-align: center;">
+        <img src="/images/SSM/modeling.png" alt="Figure 02" style="max-width: 100%; height: auto;">
+    </div>
+</div>
 
 ## Table of Contents
 

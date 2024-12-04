@@ -1,5 +1,5 @@
 ---
-title: "Neural Radiance Fields"
+title: "Neural Radiance Fields: A Comprehensive Review 📚🔍✨"
 date: 2024-10-19
 permalink: /posts/nerfs/
 tags:
@@ -10,7 +10,21 @@ tags:
   - Computer Vision
 ---
 
-_This blog offers a comprehensive exploration of Neural Radiance Fields (NeRFs), a method for photorealistic 3D scene reconstruction from sparse 2D images. It covers foundational concepts, training techniques, and notable advancements and well-known variants in the NeRF family._
+<div style="display: flex; align-items: center; gap: 20px;">
+    <div style="flex: 1;">
+        <p>
+            <em>
+                This blog offers a comprehensive exploration of Neural Radiance Fields (NeRFs),
+                a method for photorealistic 3D scene reconstruction from sparse 2D images. It
+                covers foundational concepts, training techniques, and notable advancements
+                and well-known variants in the NeRF family.
+            </em>
+        </p>
+    </div>
+    <div style="flex: 1; text-align: center;">
+        <img src="/images/Nerf_photos/Nerf/fig_02.png" alt="Figure 02" style="max-width: 100%; height: auto;">
+    </div>
+</div>
 
 ## **Table of Contents**
 
