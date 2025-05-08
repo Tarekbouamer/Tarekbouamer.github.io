@@ -10,7 +10,22 @@ tags:
   - NeRF
 ---
 
+<<<<<<< HEAD
 ## *Coordinate-based Networks*
+=======
+<div style="display: flex; align-items: center; gap: 20px;">
+    <div style="flex: 1;">
+        <p>
+            <em>
+                Welcome to this guide on Neural Implicit Representations (NIR), an advanced approach to 3D reconstruction and graphics. Explore concepts like implicit functions, occupancy networks, volumetric rendering, and Neural Radiance Fields (NeRF), enabling high-resolution 3D modeling.
+            </em>
+        </p>
+    </div>
+    <div style="flex: 1; text-align: center;">
+        <img src="/images/NIR/nir.png" alt="Figure 02" style="max-width: 100%; height: auto;">
+    </div>
+</div>
+>>>>>>> master
 
 ## Table of Contents
 
@@ -36,17 +51,29 @@ In this tutorial, we will approach the Neural Implicit Representation principals
 
 ## Definition
 
+<<<<<<< HEAD
 Implicit Neural Representation (*INR*) is a novel concept within machine learning and computer graphics that represents an object or scene as a continuous function, rather than an explicit surface or structure. Implicit Neural Representation aims to learn a mathematical function $ f(x, y) = 0 $ or implicit representation that can generate the desired data points.
+=======
+Implicit Neural Representation (_INR_) is a novel concept within machine learning and computer graphics that represents an object or scene as a continuous function, rather than an explicit surface or structure. Implicit Neural Representation aims to learn a mathematical function $ f(x, y) = 0 $ or implicit representation that can generate the desired data points.
+>>>>>>> master
 
 <div align="center">
   <img src="/images/NIR/nir.png" alt="NIR">
 </div>
 
+<<<<<<< HEAD
 Learning-based approaches for 3D reconstruction have gained popularity for its rich representation to 3D models, compared to the traditional Multi View Stereo (*MVS*) algorithms. Through literature, Deep learning approaches are categorized into three representations:
 
 ## Representations
 
 *What is a good representation ?*
+=======
+Learning-based approaches for 3D reconstruction have gained popularity for its rich representation to 3D models, compared to the traditional Multi View Stereo (_MVS_) algorithms. Through literature, Deep learning approaches are categorized into three representations:
+
+## Representations
+
+_What is a good representation ?_
+>>>>>>> master
 
 <div align="center">
   <img src="/images/NIR/nir_representations.png" alt="NIR">
@@ -66,7 +93,11 @@ Representing the output as a set of triangles (vertices and faces) is a very com
 
 ### Occupancy Networks
 
+<<<<<<< HEAD
 the *Occupancy Networks* implicitly represents the 3D surface as a decision boundary of a nonlinear classifier, and for every point $\mathbf{p} \in \mathbb{R}^3$ in the 3D space, the network predicts the probability of the point being inside the object. The occupancy function is defined as:
+=======
+the _Occupancy Networks_ implicitly represents the 3D surface as a decision boundary of a nonlinear classifier, and for every point $\mathbf{p} \in \mathbb{R}^3$ in the 3D space, the network predicts the probability of the point being inside the object. The occupancy function is defined as:
+>>>>>>> master
 
 $$
 \mathbf{o} :\mathbb{R}^3 \rightarrow [0, 1]
@@ -74,7 +105,11 @@ $$
 
 The occupancy function is approximated by a deep neural network $f_\theta$ with parameters $\theta$ that takes an observation $\mathbf{x} \in X$ as input condition (ex. image, point clouds,...), and it has a function from $\mathbf{p} \in \mathbb{R}^3$ to $\mathbb{R}$ as an occupancy probability.
 
+<<<<<<< HEAD
 For each input pair $(p,x)$, we can write the *occupancy network function* as:
+=======
+For each input pair $(p,x)$, we can write the _occupancy network function_ as:
+>>>>>>> master
 
 $$
 f_\theta : \mathbb{R}^3  \times X \rightarrow [0, 1]
@@ -96,7 +131,11 @@ $$
 
 #### Appearance, Geometry, and Surfaces properties
 
+<<<<<<< HEAD
 The implicit representation can be extended to have more objects properties and reasoning, such as the surface lightening and the view point. The occupancy network can conditioned by the viewing direction $v$ and light location $l$ for any 3D point $p$, for each input tuple $(p,v,l)$, we can write the *occupancy network function* as:
+=======
+The implicit representation can be extended to have more objects properties and reasoning, such as the surface lightening and the view point. The occupancy network can conditioned by the viewing direction $v$ and light location $l$ for any 3D point $p$, for each input tuple $(p,v,l)$, we can write the _occupancy network function_ as:
+>>>>>>> master
 
 $$
 f_\theta : \mathbb{R}^3  \times \mathbb{R}^3 \times \mathbb{R}^M \rightarrow [0, 1]
@@ -106,7 +145,11 @@ $$
   <img src="/images/NIR/nir_light_view.png" alt="NIR">
 </div>
 
+<<<<<<< HEAD
 The network encodes both an input 2D image and the corresponding 3D shape into a latent representations $z$ and $s$, as a conditioning to the occupancy network. The model predicts the occupancy probability for each 3D point $p$ and the color $c$, *Surface Light Fields*.
+=======
+The network encodes both an input 2D image and the corresponding 3D shape into a latent representations $z$ and $s$, as a conditioning to the occupancy network. The model predicts the occupancy probability for each 3D point $p$ and the color $c$, _Surface Light Fields_.
+>>>>>>> master
 
 - The light $l$,  denotes the light source parameters, such as the light direction, color, and intensity.
 
@@ -225,7 +268,11 @@ Learning based 3D reconstruction methods have shown impressive results, however 
   <img src="/images/NIR/dvr_arch.png" alt="NIR">
 </dev>
 
+<<<<<<< HEAD
 *Differentiable Rendering* aims to learn 3D reconstruction from RGB images only, by using the concept of implicit representation in deriving the depth gradients.
+=======
+_Differentiable Rendering_ aims to learn 3D reconstruction from RGB images only, by using the concept of implicit representation in deriving the depth gradients.
+>>>>>>> master
 
 The input image is processed with an encoder to extract latent representation $z \in \mathbb{Z} $ as a conditioning to the occupancy network $f_\theta$, as introduced in the Occupancy Networks. The 3D surface shape is determined by a threshold value $\tau$, such as $f_\theta(p, z) = \tau$.
 
@@ -278,7 +325,11 @@ Calculating the gradient of the surface depth $\hat{d}$ with reference to the ne
   <img src="/images/NIR/nerf_arch.png" alt="NIR">
 </div>
 
+<<<<<<< HEAD
 Neural Radiance Fields (*NeRF*) is a method for synthesizing novel views of a scene from a sparse set of input views. NeRF maps a 3D spatial location $\mathbf{x} \in \mathbb{R}^3$ and a 2D viewing direction $\mathbf{d} \in \mathbb{R}^2$ to color $\mathbf{c} \in \mathbb{R}^3$ and density $\sigma \in \mathbb{R}$, The network function is represented as a MLP network and defined as:
+=======
+Neural Radiance Fields (_NeRF_) is a method for synthesizing novel views of a scene from a sparse set of input views. NeRF maps a 3D spatial location $\mathbf{x} \in \mathbb{R}^3$ and a 2D viewing direction $\mathbf{d} \in \mathbb{R}^2$ to color $\mathbf{c} \in \mathbb{R}^3$ and density $\sigma \in \mathbb{R}$, The network function is represented as a MLP network and defined as:
+>>>>>>> master
 
 $$
 f: (\mathbf{x}, \mathbf{d}) \rightarrow (\mathbf{c}, \sigma)
@@ -309,7 +360,11 @@ $$
 $$
 \alpha_{i} = 1 - \exp^{(-\sigma_{i} \cdot \Delta t)}
 $$
+<<<<<<< HEAD
 **NeRF Model**: 
+=======
+**NeRF Model**:
+>>>>>>> master
 
 ```python
 class NeRF(nn.Module):
@@ -348,7 +403,11 @@ class NeRF(nn.Module):
 **NeRF Training**: We sample a set of rays from the input images, and we optimize the network parameters $\theta$ to minimize the reconstruction loss function:
 
 $$
+<<<<<<< HEAD
   L(\theta) = min_{\theta} \sum_{i=1}^{N} \left \| \hat{C_i} - C_i  \right \|_2^2 
+=======
+  L(\theta) = min_{\theta} \sum_{i=1}^{N} \left \| \hat{C_i} - C_i  \right \|_2^2
+>>>>>>> master
 $$
 
 ```python

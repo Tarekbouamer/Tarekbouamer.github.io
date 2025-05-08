@@ -9,7 +9,10 @@ main:
   # - title: "Teaching"
   #   url: /teaching/
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
   - title: "Resume"
     url: /resume/
 
