@@ -7,10 +7,6 @@ tags:
   - State Space Models
   - Mamba
 ---
-<<<<<<< HEAD
-
-# Table of Contents
-=======
 <div style="display: flex; align-items: center; gap: 20px;">
     <div style="flex: 1;">
         <p>
@@ -25,7 +21,6 @@ tags:
 </div>
 
 ## Table of Contents
->>>>>>> master
 
   1. [Introduction](#introduction)
   2. [References](#references)
@@ -46,11 +41,7 @@ Transformers are popular in sequence modeling because their self-attention mecha
 
 The S4 model is a significant advancement in sequence modeling, offering a robust alternative to existing techniques for tasks requiring efficient handling of long-range dependencies. It provides a strong foundation for future developments in sequence modeling.
 
-<<<<<<< HEAD
-*In this post, we'll explore the key concepts behind the Structured State Space (S4) model and its applications in sequence modeling.*
-=======
 _In this post, we'll explore the key concepts behind the Structured State Space (S4) model and its applications in sequence modeling._
->>>>>>> master
 
 ## Structured State Space (S4)
 
@@ -58,10 +49,6 @@ _In this post, we'll explore the key concepts behind the Structured State Space 
   <img src="/images/SSM/modeling.png" alt="SSM Modeling">
 </div> -->
 
-<<<<<<< HEAD
-
-=======
->>>>>>> master
 ### State Space Models (SSMs)
 
 <div align="center">
@@ -69,20 +56,12 @@ _In this post, we'll explore the key concepts behind the Structured State Space 
   Figure 1: Block diagram representation of the linear state-space equations.
 </div>
 
-<<<<<<< HEAD
-
-=======
->>>>>>> master
 State space models (SSMs) are a class of probabilistic models that describe a system's evolution over time. They consist of two primary components:
 
 1. **State Equation:** Models the system's internal dynamics $ \dot{x}(t) = f(x(t), u(t)) $
 2. **Observation Equation:** Relates the system's internal state to observed data $ y(t) = g(x(t), u(t)) $
 
-<<<<<<< HEAD
-*we note that the SSMs are widely used in control theory and signal processing to model complex systems with hidden states such as Kalman filters and Hidden Markov Models (HMMs).*
-=======
 _we note that the SSMs are widely used in control theory and signal processing to model complex systems with hidden states such as Kalman filters and Hidden Markov Models (HMMs)._
->>>>>>> master
 
 The SSM models are defined by a learned parameters $ \{A, B, C \} $, where:
 
@@ -98,10 +77,6 @@ y(t) &= Cx(t)
 \end{aligned}
 $$
 
-<<<<<<< HEAD
-
-=======
->>>>>>> master
 We can say that SSM model maps a 1-D input signal $ u(t) $ to an $ p\times D $ latent state $ x(t) $, which is then mapped to an $ q \times D $ output signal $ y(t) $.
 
 ### HiPPO: High-order Polynomial Projection Operators
@@ -149,11 +124,7 @@ x(t + \Delta) - x(t) = \frac{\Delta}{2} \left[ Ax(t + \Delta) + Bu(t + \Delta) +
 \end{aligned}
 $$
 
-<<<<<<< HEAD
-Solving for \(x(t + \Delta)\):
-=======
 Solving for $x(t + \Delta)$:
->>>>>>> master
 
 $$
 \begin{aligned}
@@ -163,13 +134,8 @@ $$
 
 where:
 
-<<<<<<< HEAD
-- \(x_k\) and \(x_{k+1}\) denote the state vectors at the current and next time steps, respectively.
-- \(u_k\) and \(u_{k+1}\) are the control inputs.
-=======
 - $x_k$ and $x_{k+1}$ denote the state vectors at the current and next time steps, respectively.
 - $u_k$ and $u_{k+1}$ are the control inputs.
->>>>>>> master
 
 We obtain the discrete state space representation by setting:
 
@@ -185,11 +151,7 @@ and the observation matrix remains the same.
 
 ### Training SSMs: the convolutional representation
 
-<<<<<<< HEAD
-For non-recurrent SSMs, we find a connection between LTI systems and convolutional neural networks. Assuming the initial state \( x_0 = 0 \), the output of the SSM can be expressed as:
-=======
 For non-recurrent SSMs, we find a connection between LTI systems and convolutional neural networks. Assuming the initial state $ x_0 = 0 $, the output of the SSM can be expressed as:
->>>>>>> master
 
 $$
 \begin{array}{ccc}
@@ -238,21 +200,13 @@ y_k &= \bar{K} * u
 \end{array}
 $$
 
-<<<<<<< HEAD
-where \( \bar{K} \) represents **the SSM convolutional kernel**.
-=======
 where $ \bar{K} $ represents **the SSM convolutional kernel**.
->>>>>>> master
 
 ## Methods
 
 ### Diagolnalization of the HiPPO Matrix
 
-<<<<<<< HEAD
-We have shown that the discrete-SSM, has a repeated multiplication of the matrix \( \bar{A} \) which requires a complexity of $ O(N^{2} L) $ and a memory of $ O(N L) $, where \( N \) is the number of states and \( L \) is the length of the sequence.
-=======
 We have shown that the discrete-SSM, has a repeated multiplication of the matrix $ \bar{A} $ which requires a complexity of $ O(N^{2} L) $ and a memory of $ O(N L) $, where $ N $ is the number of states and $ L $ is the length of the sequence.
->>>>>>> master
 
 Assuming that $ x = V \hat{x} $, the state space model can be diagonalized as:
 
@@ -263,12 +217,7 @@ y &= C V \hat{x}
 \end{aligned}
 $$
 
-<<<<<<< HEAD
-Thus, for a diagonal matrix \( A \), the state space model can be solved in $ O(N L) \log^{2}{N+L} $, as $\bar{K}$ is a Vendermonde matrix, leading to a faster computation. Unfortunately, the diagonalization of the HiPPO does not work due to numerical issues.
-
-=======
 Thus, for a diagonal matrix $ A $, the state space model can be solved in $ O(N L) \log^{2}{N+L} $, as $\bar{K}$ is a Vendermonde matrix, leading to a faster computation. Unfortunately, the diagonalization of the HiPPO does not work due to numerical issues.
->>>>>>> master
 
 ### Normal Plus Low-Rank (NPLR) Decomposition
 
@@ -284,13 +233,6 @@ $$
 
 where the Normal part is a diagonal matrix and the Low-Rank part is a low-rank matrix. The NPLR decomposition allows for a more efficient computation of the HiPPO matrix, reducing the complexity to $ O(N L) \log^{2}{N+L} $.
 
-<<<<<<< HEAD
-
 ## References
 
 [1] [Efficiently Modeling Long Sequences with Structured State Spaces](https://arxiv.org/abs/2111.00396), Albert Gu and Karan Goel and Christopher Re .
-=======
-## References
-
-[1] [Efficiently Modeling Long Sequences with Structured State Spaces](https://arxiv.org/abs/2111.00396), Albert Gu and Karan Goel and Christopher Re .
->>>>>>> master

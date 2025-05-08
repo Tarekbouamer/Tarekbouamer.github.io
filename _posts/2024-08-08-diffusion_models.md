@@ -9,8 +9,6 @@ tags:
   - Deep Learning
 ---
 
-<<<<<<< HEAD
-=======
 
 <div style="display: flex; align-items: center; gap: 20px;">
     <div style="flex: 1;">
@@ -25,7 +23,6 @@ tags:
     </div>
 </div>
 
->>>>>>> master
 ## Table of Contents
 
 1. [Introduction to Diffusion Models](#introduction-to-diffusion-models)
@@ -45,9 +42,6 @@ tags:
 5. [Cascaded Diffusion Models](#cascaded-diffusion-models)
 6. [Latent Diffusion Models](#latent-diffusion-models)
 7. [Applications](#applications)
-<<<<<<< HEAD
-8. [References](#references)
-=======
     - [GLIDE](#glide)
     - [DALL-E2](#dall-e2)
     - [Imagen](#imagen)
@@ -61,7 +55,6 @@ tags:
     - [3D Shape Generation](#3d-shape-generation)
 8. [Summary](#summary)
 9. [References](#references)
->>>>>>> master
 
 ## Introduction to Diffusion Models
 
@@ -91,13 +84,10 @@ Compared to GANs and VAEs, Diffusion Models offer several advantages: (1) they t
 
 The mathematical foundation of Diffusion Models is based on the concept of generating data by refining a noisy input. This process is deeply rooted in probability theory, particularly in the modeling of stochastic processes.
 
-<<<<<<< HEAD
-=======
 <div align="center">
   <img src="/images/DM/forward_reverse_diffusions.png " alt="Forward and Reverse Diffusion illustration">
 </div>
 
->>>>>>> master
 ### Forward Diffusion
 
 The forward diffusion process is an essential component of Diffusion Models, where a clean data sample is progressively transformed into a noisier version over multiple steps.
@@ -144,13 +134,10 @@ $$
 q(x_t \mid x_0) = \mathcal{N}\left(x_t; \sqrt{\bar{\alpha}_t} \cdot x_0, (1 - \bar{\alpha}_t) \mathbf{I}\right)
 $$
 
-<<<<<<< HEAD
-=======
 <div align="center">
   <img src="/images/DM/forward_reverse_image.png" alt="Forward and Reverse Diffusion illustration">
 </div>
 
->>>>>>> master
 ### Inverse Diffusion
 
 The inverse diffusion process is the core generative mechanism in Diffusion Models. If we can reverse the process $ q(x_{t-1} \mid x_t) $, we will be able to re-create the true input data $ x_0 $, knowing that $ q(x_{t-1} \mid x_t) $ is also a Gaussian.
@@ -197,14 +184,11 @@ The forward variance $ \beta_{t} $ can be set as a constant or determined by a s
 
 $\bar{\alpha}_{t} = \frac{f(t)}{f(0)}, \quad f(t) = \cos{\left(\frac{t/T + s}{1 + s} \cdot \frac{\pi}{2}\right)}^2, \quad \beta_{t} = \text{clip}\left(1 - \frac{\bar{\alpha}_{t}}{\bar{\alpha}_{t-1}}, 0.999\right)$
 
-<<<<<<< HEAD
-=======
 <div align="center">
   <img src="/images/DM/linear_vs_cosine_schedular.png" alt="Linear vs Cosine Schedule illustration">
   <img src="/images/DM/linear_vs_cosine_schedular_plot.png" alt="Linear vs Cosine Schedule Plot">
 </div>
 
->>>>>>> master
 ## Model Architectures
 
 Diffusion Models can be implemented using various neural network architectures, each with its unique strengths and applications. The common architectures include U-Net and transformers.
@@ -219,13 +203,10 @@ The U-Net architecture is commonly used due to its ability to handle inputs and 
 
 - **Skips**: These connections link corresponding layers from the downsampling and upsampling branch. They concatenate features from the encoder with the decoder, preserving high-resolution details.
 
-<<<<<<< HEAD
-=======
 <div align="center">
   <img src="/images/DM/unet_architecture.png" alt="U-Net Architecture illustration">
 </div>
 
->>>>>>> master
 The orignal implementation of the U-Net in diffusion models uses resnet blocks with diffusion time steps embedding with swish non-linearity, and group normalization. Additionaly, attention block was introduced.
 
 ### Transformer-Based Models
@@ -338,12 +319,6 @@ $$
 
 ## Cascaded Diffusion Models
 
-<<<<<<< HEAD
-## Latent Diffusion Models
-
-## Applications
-
-=======
 <div align="center">
   <img src="/images/DM/cascaded_1.png" alt="Cascaded Diffusion Models illustration">
 </div>
@@ -423,5 +398,4 @@ $$
 
 ## Summary
 
->>>>>>> master
 ## References

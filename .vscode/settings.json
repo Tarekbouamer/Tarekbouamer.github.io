@@ -1,17 +1,10 @@
 {
     "cSpell.words": [
         "convolutional",
-<<<<<<< HEAD
-        "representaions",
-        "Voxel",
-        "Voxels"
-    ]
-=======
         "keypoints",
         "representaions",
         "Voxel",
         "Voxels"
     ],
     "cSpell.enabled": true
->>>>>>> master
 }
