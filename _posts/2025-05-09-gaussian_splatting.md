@@ -1,4 +1,4 @@
-
+---
 title: 'A Comprehensive Study for Gaussian Splatting'
 date: 2025-05-09
 permalink: /posts/gaussian-splatting/
@@ -10,6 +10,7 @@ tags:
 - Computer Graphics
 - Machine Learning
 
+---
 <div style="display: flex; align-items: center; gap: 20px;">
     <div style="flex: 1;">
         <p>
