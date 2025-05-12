@@ -93,7 +93,7 @@ $$
 
 where $\mathbf{x} \in \mathbb{R}^3$ is a query point in 3D space. $\alpha$ is a scaling factor that controls the Gaussian's opacity, and $\sigma(\alpha)$ is a function that maps the opacity to a suitable range.
 
-#### 🧭 Projection to Camera Space
+**🧭 Projection to Camera Space:**
 
 To project a 3D Gaussian into 2D, we use the camera projection matrix $P = [R \mid t]$, where:
 
@@ -115,7 +115,7 @@ $$
 \mathcal{N}(\mu_{\text{camera}, i}, \Sigma_{\text{camera}, i})
 $$
 
-#### 📡 Ray Space Transformation
+**📡 Ray Space Transformation:**
 
 Rather than immediately projecting into 2D, the system introduces an intermediate **Ray Space**, as proposed in the [*EWA Volume Splatting*](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.20.7368&rep=rep1&type=pdf) paper. In this coordinate system, rays are aligned parallel to an axis, making it easier to analytically integrate over the splat without sampling along the ray (unlike NeRF).
 
