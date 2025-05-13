@@ -77,7 +77,7 @@ To address these issues, modern techniques introduce several enhancements, inclu
 - **Opacity-aware alpha blending** to simulate volumetric transmittance and occlusion.  
 - **Spherical Harmonics (SH)** to encode view-dependent appearance.
 
-Let $\mathcal{G} = \{g_i\}_{i=1}^N$ denote a set of $N$ point primitives, where each $g_i$ is defined by parameters $(\mu_i, \Sigma_i, \alpha_i, c_i, SH_i)$. The rendered pixel color $C$ along a camera ray $\mathbf{r}$ is computed via front-to-back alpha compositing:
+Let \\(\mathcal{G} = \{g_i\}_{i=1}^N\\) denote a set of \\(N\\) point primitives, where each \\(g_i\\) is defined by parameters \\((\mu_i, \Sigma_i, \alpha_i, c_i, SH_i)\\). The rendered pixel color \\(C\\) along a camera ray \\(\mathbf{r}\\) is computed via front-to-back alpha compositing:
 
 $$
 C(\mathbf{r}) = \sum_{i=1}^N T_i \alpha_i c_i
@@ -95,20 +95,20 @@ Each point in the scene is modeled as a **3D anisotropic Gaussian**, which is di
     <img src="/images/GS/spalts.png" alt="Figure 03">
 </div>
 
-To address this, each Gaussian is defined by a **3D covariance matrix** $\Sigma_i$ in world space, centered at its mean position $\mu_i$. The spatial influence of a Gaussian is given by:
+To address this, each Gaussian is defined by a **3D covariance matrix** \\(\Sigma_i\\) in world space, centered at its mean position \\(\mu_i\\). The spatial influence of a Gaussian is given by:
 
 $$
 G_i(\mathbf{x}) = \sigma({\alpha}) \exp\left(-\frac{1}{2}(\mathbf{x} - \mu_i)^T \Sigma_i^{-1} (\mathbf{x} - \mu_i)\right)
 $$
 
-where $\mathbf{x} \in \mathbb{R}^3$ is a query point in 3D space. $\alpha$ is a scaling factor that controls the Gaussian's opacity, and $\sigma(\alpha)$ is a function that maps the opacity to a suitable range.
+where \\(\mathbf{x} \in \mathbb{R}^3\\) is a query point in 3D space. \\(\alpha\\) is a scaling factor that controls the Gaussian's opacity, and \\(\sigma(\alpha)\\) is a function that maps the opacity to a suitable range.
 
 **🧭 Projection to Camera Space:**
 
-To project a 3D Gaussian into 2D, we use the camera projection matrix $P = [R \mid t]$, where:
+To project a 3D Gaussian into 2D, we use the camera projection matrix \\(P = [R \mid t]\\), where:
 
-- $R$ is the camera rotation matrix
-- $t$ is the camera translation vector
+- \\(R\\) is the camera rotation matrix  
+- \\(t\\) is the camera translation vector  
 
 The Gaussian mean and covariance transform as:
 
@@ -131,18 +131,19 @@ $$
 
 **📡 Ray Space Transformation:**
 
-Rather than immediately projecting into 2D, the system introduces an intermediate **Ray Space**, as proposed in the [*EWA Volume Splatting*](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.20.7368&rep=rep1&type=pdf) paper. In this coordinate system, rays are aligned parallel to an axis, making it easier to analytically integrate over the splat without sampling along the ray (unlike NeRF).
+Rather than immediately projecting into 2D, the system introduces an intermediate **Ray Space**, as proposed in the [_EWA Volume Splatting_](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.20.7368&rep=rep1&type=pdf) paper. In this coordinate system, rays are aligned parallel to an axis, making it easier to analytically integrate over the splat without sampling along the ray (unlike NeRF).
 
-To transform into Ray Space, we apply the Jacobian $J_i$ of the projection function at $\mu_{\text{camera}, i}$:
+To transform into Ray Space, we apply the Jacobian \\(J_i\\) of the projection function at \\(\mu_{\text{camera}, i}\\):
+
 $$
 \Sigma_{\text{ray}, i} = J_i \Sigma_{\text{camera}, i} J_i^T = J_i R \Sigma_i R^T J_i^T
 $$
 
 This transformation warps the Gaussian to match how it appears along a ray-aligned coordinate system while preserving symmetry.
 
-Zwicker's paper shows that if we skip the third row and column of the covariance matrix, we obtain a $2 \times 2$ covariance matrix suitable for 2D splatting. This simplification effectively slices the ellipsoid along the viewing direction, producing a 2D elliptical footprint in Ray Space that preserves the key anisotropic properties of the original $3 \times 3$ covariance—just as if we had started from planar points with known normals.
+Zwicker's paper shows that if we skip the third row and column of the covariance matrix, we obtain a \\(2 \times 2\\) covariance matrix suitable for 2D splatting. This simplification effectively slices the ellipsoid along the viewing direction, producing a 2D elliptical footprint in Ray Space that preserves the key anisotropic properties of the original \\(3 \times 3\\) covariance—just as if we had started from planar points with known normals.
 
-However, transforming and optimizing these Gaussians requires care, have physical meaning. Covariance matrices must remain **positive semi-definite (PSD)** to be valid, meaning all eigenvalues must be non-negative. Directly optimizing $\Sigma_i$ using gradient descent can easily violate this constraint, especially when updates push the matrix toward singular or indefinite configurations.
+However, transforming and optimizing these Gaussians requires care, as covariance matrices must have physical meaning. Covariance matrices must remain **positive semi-definite (PSD)** to be valid, meaning all eigenvalues must be non-negative. Directly optimizing \\(\Sigma_i\\) using gradient descent can easily violate this constraint, especially when updates push the matrix toward singular or indefinite configurations.
 
 To preserve PSD structure during training, the authors reparameterize each 3D covariance matrix as an ellipsoid:
 
@@ -152,10 +153,10 @@ $$
 
 Here:
 
-- $S_i$ is a diagonal matrix of non-negative scale values, encoding the lengths of the ellipsoid’s principal axes.
-- $R_i$ is a rotation matrix constructed from a normalized quaternion $q$ determining the orientation of the ellipsoid in 3D space.
+- \\(S_i\\) is a diagonal matrix of non-negative scale values, encoding the lengths of the ellipsoid’s principal axes.  
+- \\(R_i\\) is a rotation matrix constructed from a normalized quaternion \\(q\\) determining the orientation of the ellipsoid in 3D space.
 
-This factorization ensures that $\Sigma_i$ is always symmetric and PSD by construction. It also separates geometry into interpretable components: *Scale and Orientation*.
+This factorization ensures that \\(\Sigma_i\\) is always symmetric and PSD by construction. It also separates geometry into interpretable components: _Scale and Orientation_.
 
 By operating in this ray-aligned space, the splatting process avoids the need for discrete point sampling along rays—as is required in NeRF—and instead enables efficient, closed-form rasterization of these warped ellipsoids.
 
@@ -167,16 +168,16 @@ It consists of two core components: The **Optimization of Gaussian Parameters** 
 
 ### 3.1 Optimization of Gaussian Parameters
 
-The optimization is driven by comparing rendered images against ground-truth views. For a sampled camera $P_k$ and its corresponding image $I_k$, the system renders an image $\hat{I}_k$ using the current set of Gaussians projected into view space.
+The optimization is driven by comparing rendered images against ground-truth views. For a sampled camera \\(P_k\\) and its corresponding image \\(I_k\\), the system renders an image \\(\hat{I}_k\\) using the current set of Gaussians projected into view space.
 
-A differentiable loss is then computed, composed of two terms: a photometric $L_1$ loss and a perceptual $L_{\text{D-SSIM}}$ loss:
+A differentiable loss is then computed, composed of two terms: a photometric \\(L_1\\) loss and a perceptual \\(L_{\text{D-SSIM}}\\) loss:
 
 $$
 \mathcal{L}(I_k, \hat{I}_k) = (1 - \lambda) \cdot \| I_k - \hat{I}_k \|_1 + \lambda \cdot \mathcal{L}_{\text{D-SSIM}}(I_k, \hat{I}_k)
 $$
 
-- $\lambda$ is a weighting factor (typically set to 0.2) that balances the contribution of the two loss terms.
-- $\mathcal{L}_{\text{D-SSIM}}$ is the **Differentiable Structural Similarity Index** loss, which encourages alignment in luminance, contrast, and structural features between $I_k$ and $\hat{I}_k$.
+- \\(\lambda\\) is a weighting factor (typically set to 0.2) that balances the contribution of the two loss terms.
+- \\(\mathcal{L}_{\text{D-SSIM}}\\) is the **Differentiable Structural Similarity Index** loss, which encourages alignment in luminance, contrast, and structural features between \\(I_k\\) and \\(\hat{I}_k\\).
 
 The SSIM-based term is defined as:
 
@@ -184,21 +185,21 @@ $$
 \mathcal{L}_{\text{D-SSIM}} = 1 - SSIM(x, y)
 $$
 
-where $x$ and $y$ are patches from the rendered and ground-truth images. SSIM considers local statistics:
+where \\(x\\) and \\(y\\) are patches from the rendered and ground-truth images. SSIM considers local statistics:
 
-- $\mu_x$, $\mu_y$: local means
-- $\sigma_x^2$, $\sigma_y^2$: variances
-- $\sigma_{xy}$: covariance
-- $c_1 = (k_1 L)^2$, $c_2 = (k_2 L)^2$ stabilize division, with $k_1 = 0.01$, $k_2 = 0.03$, and $L$ the dynamic range
+- \\(\mu_x\\), \\(\mu_y\\): local means  
+- \\(\sigma_x^2\\), \\(\sigma_y^2\\): variances  
+- \\(\sigma_{xy}\\): covariance  
+- \\(c_1 = (k_1 L)^2\\), \\(c_2 = (k_2 L)^2\\) stabilize division, with \\(k_1 = 0.01\\), \\(k_2 = 0.03\\), and \\(L\\) the dynamic range
 
 The optimizer used is **Adam**, and gradients are computed and backpropagated through the rendering pipeline to update four key learnable parameters for each Gaussian:
 
-- **Position** $\mu_i$
-- **Covariance** $\Sigma_i = R_i S_i S_i^T R_i^T$
-- **Color coefficients** $c_i$ (via spherical harmonics $SH_i$)
-- **Opacity** $\alpha_i$
+- **Position** \\(\mu_i\\)  
+- **Covariance** \\(\Sigma_i = R_i S_i S_i^T R_i^T\\)  
+- **Color coefficients** \\(c_i\\) (via spherical harmonics \\(SH_i\\))  
+- **Opacity** \\(\alpha_i\\)
 
-Since the covariance matrix $\Sigma_i$ is parameterized by a rotation $R_i$ (from a quaternion $q$) and scale $S_i$, the gradients are computed indirectly:
+Since the covariance matrix \\(\Sigma_i\\) is parameterized by a rotation \\(R_i\\) (from a quaternion \\(q\\)) and scale \\(S_i\\), the gradients are computed indirectly:
 
 $$
 \frac{\partial \mathcal{L}}{\partial s}, \quad \frac{\partial \mathcal{L}}{\partial q}
@@ -218,14 +219,14 @@ The density control loop periodically adjusts the Gaussian set with three operat
 
 - **Cloning**: Gaussians with high position gradient magnitude are duplicated and shifted to improve coverage in under-represented areas.
 
-- **Splitting**: Gaussians with large spatial extent or covering high-frequency details are split into two smaller Gaussians:
+- **Splitting**: Gaussians with large spatial extent or covering high-frequency details are split into two smaller Gaussians:  
   $$
   \Sigma_i \rightarrow \Sigma_i^{(1)}, \Sigma_i^{(2)}, \quad s^{(j)} = \frac{1}{\phi} s_i
   $$
-  where $\phi > 1$ is a shrink factor (typically 1.6), and the new means are sampled from the original Gaussian’s PDF.
+  where \\(\phi > 1\\) is a shrink factor (typically 1.6), and the new means are sampled from the original Gaussian’s PDF.
 
-- **Pruning**: Gaussians are removed if:
-  - $\alpha_i < \epsilon_{\alpha}$ (opacity threshold) for transparency
+- **Pruning**: Gaussians are removed if:  
+  - \\(\alpha_i < \epsilon_{\alpha}\\) (opacity threshold) for transparency  
   - They have excessively large footprints (in world or image space)
 
 This densification/pruning is run every few hundred iterations (e.g., every 100 steps), ensuring that the model:
@@ -242,17 +243,17 @@ This densification/pruning is run every few hundred iterations (e.g., every 100 
 
 To enable real-time rendering and end-to-end optimization, 3D Gaussian Splatting employs a fully differentiable, tile-based rasterizer. Below we outline its key steps:
 
-**Step 1**: *Cull Gaussians Outside the View Frustum*
+**Step 1**: _Cull Gaussians Outside the View Frustum_
 
-For each Gaussian $g_i$ with mean $\mu_i$ and 99% confidence interval, we discard it if:
+For each Gaussian \\(g_i\\) with mean \\(\mu_i\\) and 99% confidence interval, we discard it if:
 
-- $\mu_i$ is outside the frustum depth range $z_{\text{near}} < (R \mu_i + t)_z < z_{\text{far}}$
-- The confidence region does not intersect any visible area
+- \\(\mu_i\\) is outside the frustum depth range \\(z_{\text{near}} < z_i < z_{\text{far}}\\)
+- The confidence region does not intersect any visible area  
 - It lies within a guard band near the near/far planes
 
-Function: *CullGaussian($\mu_i$, $P$)*
+Function: _CullGaussian(\\(\mu_i\\), \\(P\\))_
 
-**Step 2**: *Project to Screen Space*
+**Step 2**: _Project to Screen Space_
 
 For each surviving Gaussian, compute:
 
@@ -266,56 +267,56 @@ For each surviving Gaussian, compute:
   \Sigma_{\text{ray}, i} = J_i \cdot R \Sigma_i R^T \cdot J_i^T
   $$
 
-where $J_i$ is the Jacobian of the projection function at $\mu_i$.
+where \\(J_i\\) is the Jacobian of the projection function at \\(\mu_i\\).
 
-Function: *ScreenspaceGaussians($\mu_i$, $\Sigma_i$, $P$)*
+Function: _ScreenspaceGaussians(\\(\mu_i\\), \\(\Sigma_i\\), \\(P\\))_
 
-**Step 3**: *Create Screen Tiles*
+**Step 3**: _Create Screen Tiles_
 
-Divide the screen into $T = \lceil w/16 \rceil \times \lceil h/16 \rceil$ tiles of $16 \times 16$ pixels.  
+Divide the screen into \\(T = \lceil w/16 \rceil \times \lceil h/16 \rceil\\) tiles of \\(16 \times 16\\) pixels.  
 This enables efficient parallel GPU processing.
 
-Function: *CreateTiles(w, h)*
+Function: _CreateTiles(w, h)_
 
-**Step 4**: *Duplicate Gaussians per Tile*
+**Step 4**: _Duplicate Gaussians per Tile_
 
 Each Gaussian's projected 2D footprint (ellipse) may span multiple screen tiles.  
 To ensure full coverage, we duplicate the Gaussian for **every tile it overlaps**.
 
-Function: *DuplicateWithKeys($M', T$)*
+Function: _DuplicateWithKeys(\\(M'\\), \\(T\\))_
 
-**Step 5**: *Assign Sorting Keys and Sort Duplicates*
+**Step 5**: _Assign Sorting Keys and Sort Duplicates_
 
 Each duplicated Gaussian is assigned a **sorting key** that encodes:
 
-- Its **tile ID** (indicating which tile it affects)
+- Its **tile ID** (indicating which tile it affects)  
 - Its **view-space depth** (for visibility ordering)
 
 The full list of duplicates is then **globally sorted** using GPU Radix Sort. This ensures that **within each tile**, Gaussians are composited in **front-to-back** order.
 
-Function: *SortByKeys($K, L$)*
+Function: _SortByKeys(\\(K\\), \\(L\\))_
 
-**Step 6**: *Identify Per-Tile Gaussian Ranges*
+**Step 6**: _Identify Per-Tile Gaussian Ranges_
 
-Determine index ranges $[s_j, e_j]$ in the sorted list for each tile $t_j$.
+Determine index ranges \\([s_j, e_j]\\) in the sorted list for each tile \\(t_j\\).
 
-Function: *IdentifyTileRanges(T, K)*
+Function: _IdentifyTileRanges(T, K)_
 
-**Step 7**: *Rasterize Each Tile in Parallel*
+**Step 7**: _Rasterize Each Tile in Parallel_
 
 Each GPU thread block processes one tile:
 
-1. Load Gaussians in range $[s_j, e_j]$ into shared memory.
-2. For each pixel $p$:
+1. Load Gaussians in range \\([s_j, e_j]\\) into shared memory.
+2. For each pixel \\(p\\):
    - Blend Gaussians front-to-back using:
      $$
      C_p = \sum_n T_n \alpha_n c_n, \quad T_n = \prod_{m < n}(1 - \alpha_m)
      $$
-   - Stop when total opacity saturates: $\sum \alpha_n \geq 1$
+   - Stop when total opacity saturates: \\(\sum \alpha_n \geq 1\\)
 
-Function: *RasterizeTile(tile_id, [s_j, e_j])*
+Function: _RasterizeTile(tile_id, [s_j, e_j])_
 
-To enable backpropagation, the final accumulated opacity $\alpha_{\text{accum}}$ is stored during the forward pass.  
+To enable backpropagation, the final accumulated opacity \\(\alpha_{\text{accum}}\\) is stored during the forward pass.  
 In the backward pass, Gaussians are traversed in reverse, and transmittance is recovered via:
 
 $$
@@ -341,7 +342,7 @@ The training process for 3D Gaussian Splatting optimizes scene representation by
 We start with a sparse SfM point cloud and calibrated camera poses.
 
 - **SfM-based point cloud**: Provides initial 3D positions and calibrated camera poses using COLMAP for structure-from-motion.
-- **Gaussian parameters**: Each point is initialized with Position $\mu_i$, Isotropic covariance $\Sigma_i = \sigma^2 I$, View-independent color $c_i$ and Opacity $\alpha_i$
+- **Gaussian parameters**: Each point is initialized with Position \\(\mu_i\\), Isotropic covariance \\(\Sigma_i = \sigma^2 I\\), View-independent color \\(c_i\\) and Opacity \\(\alpha_i\\)
 
 These parameters are then optimized through a series of training iterations.
 
@@ -349,25 +350,24 @@ These parameters are then optimized through a series of training iterations.
 
 In the forward pass, and for each camera view with its corresponding image, the following steps are performed:
 
-1. **Cull** Gaussians outside the camera frustum.
-2. **Project** Gaussians to 2D screen space using camera matrices and Jacobians.
-3. **Rasterize** using tile-based GPU sorting and front-to-back alpha blending.
+1. **Cull** Gaussians outside the camera frustum.  
+2. **Project** Gaussians to 2D screen space using camera matrices and Jacobians.  
+3. **Rasterize** using tile-based GPU sorting and front-to-back alpha blending.  
 4. **Compose output** image using:
 
    $$
    C(\mathbf{r}) = \sum_i T_i \alpha_i c_i, \quad T_i = \prod_{j=1}^{i-1} (1 - \alpha_j)
    $$
 
-**Optimization:**
-We compute the loss between the rendered image and the ground truth image using a composite loss function, where $\lambda$ is typically 0.2:
+**Optimization:**  
+We compute the loss between the rendered image and the ground truth image using a composite loss function, where \\(\lambda\\) is typically 0.2:
 $$
 \mathcal{L}(I_{\text{gt}}, I_{\text{pred}}) = (1 - \lambda) \|I_{\text{gt}} - I_{\text{pred}}\|_1 + \lambda \cdot \mathcal{L}_{\text{D-SSIM}}
 $$
 
 In the backwards pass, we use the **Adam** optimizer to update the learnable parameters of the Gaussians.
 
-**Densification and Pruning:**
-
+**Densification and Pruning:**  
 Every few hundred iterations, we perform a **densification** and **pruning** step to adaptively control the Gaussian set via {Clone, Split, Prune} operations.
 
 ## 6. View-Dependent Colors with Spherical Harmonics
@@ -431,20 +431,20 @@ With growing community support and open-source tooling, 3DGS is rapidly becoming
 
 **Papers:**
 
-- [Kerbl et al., 2023](https://arxiv.org/abs/2308.04079): *3D Gaussian Splatting for Real-Time Radiance Field Rendering*.
-- [Green, 2003](https://3dvar.com/Green2003Spherical.pdf): *Spherical Harmonic Lighting: The Gritty Details*.
-- [Zwicker et al., 2001](https://www.cs.umd.edu/~zwicker/publications/EWAVolumeSplatting-VIS01.pdf): *EWA Volume Splatting*.
-- [Memory-Efficient 3DGS, 2024](https://arxiv.org/abs/2406.17074): *Reducing the Memory Footprint of 3D Gaussian Splatting*.
+- [Kerbl et al., 2023](https://arxiv.org/abs/2308.04079): _3D Gaussian Splatting for Real-Time Radiance Field Rendering_.
+- [Green, 2003](https://3dvar.com/Green2003Spherical.pdf): _Spherical Harmonic Lighting: The Gritty Details_.
+- [Zwicker et al., 2001](https://www.cs.umd.edu/~zwicker/publications/EWAVolumeSplatting-VIS01.pdf): _EWA Volume Splatting_.
+- [Memory-Efficient 3DGS, 2024](https://arxiv.org/abs/2406.17074): _Reducing the Memory Footprint of 3D Gaussian Splatting_.
 
 **Blogs & Tutorials:**
 
-- [LearnOpenCV](https://learnopencv.com/3d-gaussian-splatting/): *3D Gaussian Splatting Explained*.
-- [PyImageSearch, 2024](https://pyimagesearch.com/2024/12/09/3d-gaussian-splatting-vs-nerf-the-end-game-of-3d-reconstruction/): *3D Gaussian Splatting vs NeRF: The End Game of 3D Reconstruction*.
+- [LearnOpenCV](https://learnopencv.com/3d-gaussian-splatting/): _3D Gaussian Splatting Explained_.
+- [PyImageSearch, 2024](https://pyimagesearch.com/2024/12/09/3d-gaussian-splatting-vs-nerf-the-end-game-of-3d-reconstruction/): _3D Gaussian Splatting vs NeRF: The End Game of 3D Reconstruction_.
 
 **Code & Resources:**
 
-- [Graphdeco GitHub](https://github.com/graphdeco-inria/gaussian-splatting): *Official 3D Gaussian Splatting Implementation*.
-- [Awesome 3D Gaussian Splatting](https://github.com/MrNeRF/awesome-3D-gaussian-splatting?tab=readme-ov-file#papers--documentation): *Curated list of papers, tools, and resources*.
+- [Graphdeco GitHub](https://github.com/graphdeco-inria/gaussian-splatting): _Official 3D Gaussian Splatting Implementation_.
+- [Awesome 3D Gaussian Splatting](https://github.com/MrNeRF/awesome-3D-gaussian-splatting?tab=readme-ov-file#papers--documentation): _Curated list of papers, tools, and resources_.
 
 ## Appendix: Code Snippets
 
