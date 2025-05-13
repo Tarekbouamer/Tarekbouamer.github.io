@@ -11,6 +11,7 @@ tags:
 - Machine Learning
 
 ---
+
 <div style="display: flex; align-items: center; gap: 20px;">
     <div style="flex: 1;">
         <p>
@@ -423,7 +424,7 @@ The following code snippets capture the core implementation details of 3D Gaussi
 
 **Training Loop:**
 
-- **Trainer:**
+**Trainer:**
 
 ```python
   # Training options and parameters
@@ -492,7 +493,8 @@ The following code snippets capture the core implementation details of 3D Gaussi
 
 ```
 
-- **L1 Loss:**
+**L1 Loss:**
+
 The L1 loss measures pixel-wise absolute differences between the rendered and ground-truth images. It encourages color accuracy and penalizes intensity mismatches
 
 ```python
@@ -501,9 +503,9 @@ The L1 loss measures pixel-wise absolute differences between the rendered and gr
     return torch.abs(network_output - gt).mean()
 ```
 
-- **SSIM Loss:**
+**SSIM Loss:**
 
-  SSIM (Structural Similarity Index Measure) evaluates structural similarity based on local statistics (mean, variance, covariance) over patches. It helps preserve texture, edges, and high-frequency content.
+SSIM (Structural Similarity Index Measure) evaluates structural similarity based on local statistics (mean, variance, covariance) over patches. It helps preserve texture, edges, and high-frequency content.
 
 ```python
   def create_window(window_size, channel):
@@ -563,7 +565,7 @@ The L1 loss measures pixel-wise absolute differences between the rendered and gr
 **Adaptive Density Control**
 As discussed earlier, 3D Gaussian Splatting dynamically refines its representation during training. The following class implements gradient-based cloning, splitting, and pruning of Gaussians.
 
-- **Gaussian Class:**
+**Gaussian Class:**
 
 ```python
 
@@ -673,8 +675,9 @@ As discussed earlier, 3D Gaussian Splatting dynamically refines its representati
 **Rasterization and Rendering:**
 Rendering is implemented as a multi-stage CUDA pipeline that transforms, sorts, and splats Gaussians in parallel. Below are the key kernels:
 
-- **duplicateWithKeys**
- Duplicates each Gaussian for every tile it overlaps and assigns a sort key based on tile ID and depth.
+**duplicateWithKeys:**
+
+Duplicates each Gaussian for every tile it overlaps and assigns a sort key based on tile ID and depth.
 
 ```c++
   ___global__ void duplicateWithKeys(
@@ -722,7 +725,8 @@ Rendering is implemented as a multi-stage CUDA pipeline that transforms, sorts, 
 
 ```
 
-- **identifyTileRanges**
+**identifyTileRanges:**
+
 After sorting the duplicated Gaussians, this kernel determines the range of indices belonging to each tile.
 
 ```c++
@@ -759,9 +763,9 @@ After sorting the duplicated Gaussians, this kernel determines the range of indi
   }
 ```
 
-- **rasterizeTile**
+**rasterizeTile:**
 
- This function orchestrates the full rendering pipeline: projection, tiling, duplication, sorting, and parallel blending.
+This function orchestrates the full rendering pipeline: projection, tiling, duplication, sorting, and parallel blending.
 
 ```c++
 
@@ -907,8 +911,8 @@ After sorting the duplicated Gaussians, this kernel determines the range of indi
   }
 ```
 
-- **renderCUDA**
- The final kernel: performs front-to-back alpha blending in parallel for each pixel in a tile.
+**renderCUDA**
+The final kernel: performs front-to-back alpha blending in parallel for each pixel in a tile.
 
 ```c++
   template <uint32_t CHANNELS>
