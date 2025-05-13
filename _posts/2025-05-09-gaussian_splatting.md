@@ -40,6 +40,7 @@ tags:
    7.1 [Comparison with NeRF](#71-comparison-with-nerf)  
    7.2 [Applications](#72-applications)
 8. [References](#8-references)
+9. [Appendix: Code Snippets](#appendix-code-snippets)  
 
 ## 1. Introduction
 
@@ -415,3 +416,619 @@ With growing community support and open-source tooling, 3DGS is rapidly becoming
 
 - [Graphdeco GitHub](https://github.com/graphdeco-inria/gaussian-splatting): *Official 3D Gaussian Splatting Implementation*.
 - [Awesome 3D Gaussian Splatting](https://github.com/MrNeRF/awesome-3D-gaussian-splatting?tab=readme-ov-file#papers--documentation): *Curated list of papers, tools, and resources*.
+
+## Appendix: Code Snippets
+
+The following code snippets capture the core implementation details of 3D Gaussian Splatting. Each section corresponds to a key stage in the pipeline: training, densification, and tile-based rasterization.
+
+**Training Loop:**
+
+- **Trainer:**
+
+  ```python
+  # Training options and parameters
+  opt = {
+      "iterations": 100000,              # Total number of training steps
+      "optimizer_type": "adam",          # Optimizer choice adam or sparse_adam
+      "lambda_dssim": 0.2,               # Weight for D-SSIM in the loss function
+      "depth_l1_weight_init": 0.1,       # Weight for inverse depth supervision
+      "densify_until_iter": 50000,       # Stop densifying halfway through training
+      "densification_interval": 100,     # How often to perform clone/split/prune
+  }
+
+  def training(dataset, **kwargs):
+      # Initialize model and scene
+      gaussians = GaussianModel(dataset.sh_degree, opt["optimizer_type"])
+      scene = Scene(dataset, gaussians)
+      gaussians.training_setup(opt)
+
+      # Background color used during training
+      background = torch.tensor(
+          [1, 1, 1] if dataset.white_background else [0, 0, 0], device="cuda"
+      )
+
+      # -> Start training loopu
+      for iteration in range(opt["iterations"]):
+          gaussians.update_learning_rate(iteration)
+
+          # Gradually increase SH degree during training
+          if iteration % 1000 == 0:
+              gaussians.oneupSHdegree()
+
+          # Sample a random training camera
+          viewpoint_cam = random.choice(scene.getTrainCameras())
+
+          # Render from current Gaussian state
+          render_results = render(viewpoint_cam, gaussians, background, **kwargs)
+          image = render_results["image"]
+          image_gt = viewpoint_cam.original_image.cuda()  # Original image
+
+          # Photometric loss (L1 + SSIM)
+          l1_loss_val = l1_loss(image, image_gt)
+          ssim_loss_val = ssim(image, image_gt)
+          loss = (1 - opt["lambda_dssim"]) * l1_loss_val + opt["lambda_dssim"] * (1 - ssim_loss_val)
+
+          # Optional depth supervision (inverse depth map)
+          if viewpoint_cam.depth_reliable:
+              inv_depth_pred = render_results["depth"]
+              inv_depth_gt = viewpoint_cam.invdepthmap.cuda()
+              depth_mask = viewpoint_cam.depth_mask.cuda()
+
+              # Compute masked L1 loss in inverse depth
+              depth_l1 = torch.abs((inv_depth_pred - inv_depth_gt) * depth_mask).mean()
+              loss += opt["depth_l1_weight_init"] * depth_l1  # Update the loss
+
+          # Backpropagation and update Gaussian parameters
+          loss.backward()
+          gaussians.optimizer.step()
+          gaussians.optimizer.zero_grad(set_to_none=True)  
+
+          # Density Control, Clone/split/prune Gaussians to adapt to scene geometry
+          if iteration < opt["densify_until_iter"] and iteration % opt["densification_interval"] == 0:
+              gaussians.densify_and_prune(...)
+
+      # Save the final trained model
+      torch.save(gaussians.capture(), f"{scene.model_path}/final.pth")
+
+  ```
+
+- **L1 Loss:**
+The L1 loss measures pixel-wise absolute differences between the rendered and ground-truth images. It encourages color accuracy and penalizes intensity mismatches
+
+  ```python
+  def l1_loss(network_output, gt):
+    # Mean absolute error over all pixels
+    return torch.abs(network_output - gt).mean()
+  ```
+
+- **SSIM Loss:**
+
+  SSIM (Structural Similarity Index Measure) evaluates structural similarity based on local statistics (mean, variance, covariance) over patches. It helps preserve texture, edges, and high-frequency content.
+
+  ```python
+  def create_window(window_size, channel):
+      # Create a 2D Gaussian window for convolution
+      _1D_window = gaussian(window_size, 1.5).unsqueeze(1)
+      _2D_window = _1D_window.mm(_1D_window.t()).float().unsqueeze(0).unsqueeze(0)
+      
+      # Expand to match the number of channels
+      window = Variable(_2D_window.expand(channel, 1, window_size, window_size).contiguous())
+      return window
+
+  def _ssim(img1, img2, window, window_size, channel, size_average=True):
+      # Compute local means
+      mu1 = F.conv2d(img1, window, padding=window_size // 2, groups=channel)
+      mu2 = F.conv2d(img2, window, padding=window_size // 2, groups=channel)
+
+      # Compute variances and covariance
+      mu1_sq = mu1.pow(2)
+      mu2_sq = mu2.pow(2)
+      mu1_mu2 = mu1 * mu2
+      sigma1_sq = F.conv2d(img1 * img1, window, padding=window_size // 2, groups=channel) - mu1_sq
+      sigma2_sq = F.conv2d(img2 * img2, window, padding=window_size // 2, groups=channel) - mu2_sq
+      sigma12 = F.conv2d(img1 * img2, window, padding=window_size // 2, groups=channel) - mu1_mu2
+
+      # Stability constants
+      C1 = 0.01 ** 2
+      C2 = 0.03 ** 2
+
+      # Compute SSIM map
+      ssim_map = ((2 * mu1_mu2 + C1) * (2 * sigma12 + C2)) / \
+                ((mu1_sq + mu2_sq + C1) * (sigma1_sq + sigma2_sq + C2))
+
+      # Return average SSIM
+      if size_average:
+          return ssim_map.mean()
+      else:
+          return ssim_map.mean(1).mean(1).mean(1)
+
+
+  def ssim(img1, img2, window_size=11, size_average=True):
+      # Get the number of input channels (RGB = 3)
+      channel = img1.size(-3)
+
+      # Create Gaussian filter window
+      window = create_window(window_size, channel)
+
+      # Move to same device and dtype as input
+      if img1.is_cuda:
+          window = window.cuda(img1.get_device())
+      window = window.type_as(img1)
+
+      # Compute SSIM value
+      return _ssim(img1, img2, window, window_size, channel, size_average)
+
+  ```
+
+**Adaptive Density Control**
+As discussed earlier, 3D Gaussian Splatting dynamically refines its representation during training. The following class implements gradient-based cloning, splitting, and pruning of Gaussians.
+
+- **Gaussian Class:**
+
+```python
+
+  class Gaussian:
+      def __init__(self):
+          self._xyz = torch.empty(0)             # 3D positions
+          self._features_dc = torch.empty(0)     # SH band-0 (view-independent color)
+          self._features_rest = torch.empty(0)   # SH higher-order bands
+          self._scaling = torch.empty(0)         # Anisotropic scale
+          self._rotation = torch.empty(0)        # Quaternion rotation
+          self._opacity = torch.empty(0)         # Alpha value
+
+          self.tmp_radii = torch.empty(0)        # Projected 2D sizes
+          self.max_radii2D = torch.empty(0)      # Max 2D footprint seen so far
+          self.xyz_gradient_accum = torch.empty(0)  # Gradient of reprojection loss wrt position
+          self.denom = torch.empty(0)            # Gradient normalization term
+
+          self.percent_dense = 0.01              # Relative threshold for deciding clone/split
+
+      def densify_and_clone(self, grads, grad_threshold, scene_extent):
+          # Clone Gaussians if they:
+          # 1. Have high gradient magnitude
+          # 2. Are small in world space
+          mask = torch.norm(grads, dim=-1) >= grad_threshold
+          size_filter = torch.max(self.get_scaling, dim=1).values <= self.percent_dense * scene_extent
+          selected_mask = torch.logical_and(mask, size_filter)
+
+          # Collect clone candidates
+          new_xyz = self._xyz[selected_mask]
+          new_features_dc = self._features_dc[selected_mask]
+          new_features_rest = self._features_rest[selected_mask]
+          new_opacities = self._opacity[selected_mask]
+          new_scaling = self._scaling[selected_mask]
+          new_rotation = self._rotation[selected_mask]
+          new_tmp_radii = self.tmp_radii[selected_mask]
+
+          # ⚠️ This requires merging tensors and reinitializing optimizers
+
+
+      def densify_and_split(self, grads, grad_threshold, scene_extent, N=2):
+          # Split Gaussians if they:
+          # 1. Have high gradients
+          # 2. Are large in world space
+          num = self.get_xyz.shape[0]
+          padded_grad = torch.zeros((num,), device="cuda")
+          padded_grad[:grads.shape[0]] = grads.squeeze()
+
+          mask = padded_grad >= grad_threshold
+          size_filter = torch.max(self.get_scaling, dim=1).values > self.percent_dense * scene_extent
+          selected_mask = torch.logical_and(mask, size_filter)
+
+          # Generate N samples per Gaussian by perturbing with random offsets
+          stds = self.get_scaling[selected_mask].repeat(N, 1)
+          samples = torch.normal(mean=torch.zeros_like(stds), std=stds)
+
+          # Rotate and offset samples in 3D
+          rots = build_rotation(self._rotation[selected_mask]).repeat(N, 1, 1)
+          new_xyz = torch.bmm(rots, samples.unsqueeze(-1)).squeeze(-1) + self.get_xyz[selected_mask].repeat(N, 1)
+
+          # Shrink scaling to preserve detail
+          new_scaling = self.scaling_inverse_activation(self.get_scaling[selected_mask].repeat(N, 1) / (0.8 * N))
+          new_rotation = self._rotation[selected_mask].repeat(N, 1)
+          new_features_dc = self._features_dc[selected_mask].repeat(N, 1, 1)
+          new_features_rest = self._features_rest[selected_mask].repeat(N, 1, 1)
+          new_opacity = self._opacity[selected_mask].repeat(N, 1)
+          new_tmp_radii = self.tmp_radii[selected_mask].repeat(N)
+
+          # ⚠️ This requires tensor merging and optimizer reinitialization
+
+          # Remove original large Gaussians after splitting
+          prune_mask = torch.cat((
+              selected_mask,
+              torch.zeros(N * selected_mask.sum(), dtype=torch.bool, device="cuda")
+          ))
+
+          # Prune points
+          self.prune_points(prune_mask)
+
+      def densify_and_prune(self, max_grad, min_opacity, extent, max_screen_size, radii):
+          # Normalize accumulated gradients
+          grads = self.xyz_gradient_accum / self.denom
+          grads[grads.isnan()] = 0.0
+
+          # Cache projected radii from this batch
+          self.tmp_radii = radii
+
+          # Densify using both clone and split strategies
+          self.densify_and_clone(grads, max_grad, extent)
+          self.densify_and_split(grads, max_grad, extent)
+
+          # Prune Gaussians that are:
+          # - Too transparent
+          # - Too large in screen space
+          # - Too large in world space
+          prune_mask = (self.get_opacity < min_opacity).squeeze()
+          if max_screen_size:
+              too_big_screen = self.max_radii2D > max_screen_size
+              too_big_world = self.get_scaling.max(dim=1).values > 0.1 * extent
+              prune_mask = prune_mask | too_big_screen | too_big_world
+
+          # Prune points
+          self.prune_points(prune_mask)
+          self.tmp_radii = None
+
+  ```
+
+**Rasterization and Rendering:**
+Rendering is implemented as a multi-stage CUDA pipeline that transforms, sorts, and splats Gaussians in parallel. Below are the key kernels:
+
+- **duplicateWithKeys**
+ Duplicates each Gaussian for every tile it overlaps and assigns a sort key based on tile ID and depth.
+
+  ```c++
+  ___global__ void duplicateWithKeys(
+      int P,
+      const float2* points_xy,              // 2D screen-space mean of each Gaussian
+      const float* depths,                  // View-space depth of each Gaussian
+      const uint32_t* offsets,              // Output offset per Gaussian from prefix sum
+      uint64_t* gaussian_keys_unsorted,     // Output: [tileID | depth]
+      uint32_t* gaussian_values_unsorted,   // Output: original Gaussian index
+      int* radii,                            // Projected radius in pixels
+      dim3 grid                              // Tile grid dimensions
+  )
+  {
+      auto idx = cg::this_grid().thread_rank();
+      if (idx >= P)
+          return;
+
+      // Skip Gaussians that are invisible or fully clipped
+      if (radii[idx] > 0)
+      {
+          // Determine the write offset for this Gaussian’s duplicates
+          uint32_t off = (idx == 0) ? 0 : offsets[idx - 1];
+
+          // Get tile bounding rectangle based on projected center + radius
+          uint2 rect_min, rect_max;
+          getRect(points_xy[idx], radii[idx], rect_min, rect_max, grid);
+
+          // Emit one key/value pair for every tile the ellipse touches
+          for (int y = rect_min.y; y < rect_max.y; y++)
+          {
+              for (int x = rect_min.x; x < rect_max.x; x++)
+              {
+                  // Key = [tile ID (upper 32 bits) | depth (lower 32 bits)]
+                  uint64_t key = y * grid.x + x;
+                  key <<= 32;
+                  key |= *((uint32_t*)&depths[idx]);  // Fast bit-wise copy
+
+                  gaussian_keys_unsorted[off] = key;
+                  gaussian_values_unsorted[off] = idx;
+                  off++;
+              }
+          }
+      }
+  }
+
+  ```
+
+- **identifyTileRanges**
+After sorting the duplicated Gaussians, this kernel determines the range of indices belonging to each tile.
+
+  ```c++
+  __global__ void identifyTileRanges(int L, uint64_t* point_list_keys, uint2* ranges)
+  {
+      auto idx = cg::this_grid().thread_rank();
+      if (idx >= L)
+          return;
+
+      // Extract tile ID from the top 32 bits of the key
+      uint64_t key = point_list_keys[idx];
+      uint32_t currtile = key >> 32;
+
+      if (idx == 0)
+      {
+          // The first entry begins the range for its tile
+          ranges[currtile].x = 0;
+      }
+      else
+      {
+          uint32_t prevtile = point_list_keys[idx - 1] >> 32;
+
+          // If tile ID changes, mark the boundary between tile ranges
+          if (currtile != prevtile)
+          {
+              ranges[prevtile].y = idx;    // End of previous tile’s range
+              ranges[currtile].x = idx;    // Start of new tile’s range
+          }
+      }
+
+      // The last entry completes the final tile’s range
+      if (idx == L - 1)
+          ranges[currtile].y = L;
+  }
+  ```
+
+- **rasterizeTile**
+
+ This function orchestrates the full rendering pipeline: projection, tiling, duplication, sorting, and parallel blending.
+
+  ```c++
+
+  int CudaRasterizer::Rasterizer::forward(...) {
+      // === Step 0: Setup ===
+      // Compute focal lengths from camera field of view
+      const float focal_y = height / (2.0f * tan_fovy);
+      const float focal_x = width / (2.0f * tan_fovx);
+
+      // Allocate memory for per-Gaussian data like screen positions, SH → RGB colors, opacities, etc.
+      size_t chunk_size = required<GeometryState>(P);
+      char* chunkptr = geometryBuffer(chunk_size);
+      GeometryState geomState = GeometryState::fromChunk(chunkptr, P);
+
+      // Allocate output radii buffer if not externally provided
+      if (radii == nullptr) {
+          radii = geomState.internal_radii;
+      }
+
+      // Create CUDA tile grid: screen is divided into 16x16 pixel tiles
+      dim3 tile_grid((width + BLOCK_X - 1) / BLOCK_X, (height + BLOCK_Y - 1) / BLOCK_Y, 1);
+      dim3 block(BLOCK_X, BLOCK_Y, 1);
+
+      // Allocate image-space buffers for alpha accumulation and output color
+      size_t img_chunk_size = required<ImageState>(width * height);
+      char* img_chunkptr = imageBuffer(img_chunk_size);
+      ImageState imgState = ImageState::fromChunk(img_chunkptr, width * height);
+
+      // === Step 1: Cull and Transform ===
+      // Reject Gaussians outside frustum bounds or guard zones, and project valid ones to screen space.
+      // Also, convert SH → RGB and compute conic 2D ellipse parameters for each Gaussian.
+      CHECK_CUDA(FORWARD::preprocess(
+          P, D, M,
+          means3D,
+          (glm::vec3*)scales,
+          scale_modifier,
+          (glm::vec4*)rotations,
+          opacities,
+          shs,
+          geomState.clamped,
+          cov3D_precomp,
+          colors_precomp,
+          viewmatrix, projmatrix,
+          (glm::vec3*)cam_pos,
+          width, height,
+          focal_x, focal_y,
+          tan_fovx, tan_fovy,
+          radii,
+          geomState.means2D,
+          geomState.depths,
+          geomState.cov3D,
+          geomState.rgb,
+          geomState.conic_opacity,
+          tile_grid,
+          geomState.tiles_touched,
+          prefiltered,
+          antialiasing
+      ), debug)
+
+      // === Step 2: Compute Tile Overlap and Prefix Sum ===
+      // Each Gaussian may overlap multiple tiles — prefix sum gives total #instances
+      CHECK_CUDA(cub::DeviceScan::InclusiveSum(
+          geomState.scanning_space,
+          geomState.scan_size,
+          geomState.tiles_touched,
+          geomState.point_offsets,
+          P
+      ), debug)
+
+      // Read the total number of duplicated instances across tiles
+      int num_rendered;
+      CHECK_CUDA(cudaMemcpy(&num_rendered, geomState.point_offsets + P - 1, sizeof(int), cudaMemcpyDeviceToHost), debug);
+
+      // === Step 3: Duplicate Gaussians per Tile ===
+      // Each instance is assigned a key: [tile ID | depth] for sorting
+      size_t binning_chunk_size = required<BinningState>(num_rendered);
+      char* binning_chunkptr = binningBuffer(binning_chunk_size);
+      BinningState binningState = BinningState::fromChunk(binning_chunkptr, num_rendered);
+
+      duplicateWithKeys<<<(P + 255) / 256, 256>>>(
+          P,
+          geomState.means2D,
+          geomState.depths,
+          geomState.point_offsets,
+          binningState.point_list_keys_unsorted,
+          binningState.point_list_unsorted,
+          radii,
+          tile_grid
+      )
+      CHECK_CUDA(, debug)
+
+      // === Step 4: Sort by Tile and Depth ===
+      // Front-to-back alpha blending requires depth-sorted Gaussians within each tile
+      int bit = getHigherMsb(tile_grid.x * tile_grid.y); // tile ID bit length
+
+      CHECK_CUDA(cub::DeviceRadixSort::SortPairs(
+          binningState.list_sorting_space,
+          binningState.sorting_size,
+          binningState.point_list_keys_unsorted,
+          binningState.point_list_keys,
+          binningState.point_list_unsorted,
+          binningState.point_list,
+          num_rendered,
+          0, 32 + bit
+      ), debug)
+
+      // === Step 5: Identify Per-Tile Work Ranges ===
+      // For each tile, compute range [start, end] of sorted Gaussians
+      CHECK_CUDA(cudaMemset(imgState.ranges, 0, tile_grid.x * tile_grid.y * sizeof(uint2)), debug);
+
+      if (num_rendered > 0) {
+          identifyTileRanges<<<(num_rendered + 255) / 256, 256>>>(
+              num_rendered,
+              binningState.point_list_keys,
+              imgState.ranges
+          );
+      }
+      CHECK_CUDA(, debug)
+
+      // === Step 6: Rasterize Each Tile in Parallel ===
+      // Each tile blends its Gaussians using front-to-back alpha blending
+      const float* feature_ptr = (colors_precomp != nullptr) ? colors_precomp : geomState.rgb;
+
+      CHECK_CUDA(FORWARD::render(
+          tile_grid, block,
+          imgState.ranges,
+          binningState.point_list,
+          width, height,
+          geomState.means2D,
+          feature_ptr,
+          geomState.conic_opacity,
+          imgState.accum_alpha,
+          imgState.n_contrib,
+          background,
+          out_color,
+          geomState.depths,
+          depth
+      ), debug)
+
+      // === Final Output ===
+      // Return the number of rendered Gaussian instances
+      return num_rendered;
+  }
+  ```
+
+- **renderCUDA**
+ The final kernel: performs front-to-back alpha blending in parallel for each pixel in a tile.
+
+  ```c++
+  template <uint32_t CHANNELS>
+  __global__ void __launch_bounds__(BLOCK_X * BLOCK_Y)
+  renderCUDA(
+  const uint2* __restrict__ ranges,            // Start/end indices per tile
+  const uint32_t* __restrict__ point_list,     // Sorted list of duplicated Gaussian IDs
+  int W, int H,                                 // Image width/height
+  const float2* __restrict__ points_xy_image,  // Screen-space positions of Gaussians
+  const float* __restrict__ features,          // RGB/SH features
+  const float4* __restrict__ conic_opacity,    // Elliptical filter parameters + opacity
+  float* __restrict__ final_T,                 // Transmittance output (for backward pass)
+  uint32_t* __restrict__ n_contrib,            // Number of contributing Gaussians
+  const float* __restrict__ bg_color,          // Background color
+  float* __restrict__ out_color,               // Final image output
+  const float* __restrict__ depths,            // Depth per Gaussian
+  float* __restrict__ invdepth                 // Output inverse depth buffer
+  )
+  {
+  // Identify current tile and pixel position
+  auto block = cg::this_thread_block();
+  uint32_t horizontal_blocks = (W + BLOCK_X - 1) / BLOCK_X;
+  uint2 pix_min = { block.group_index().x * BLOCK_X, block.group_index().y * BLOCK_Y };
+  uint2 pix_max = { min(pix_min.x + BLOCK_X, W), min(pix_min.y + BLOCK_Y , H) };
+  uint2 pix = { pix_min.x + block.thread_index().x, pix_min.y + block.thread_index().y };
+  uint32_t pix_id = W * pix.y + pix.x;
+  float2 pixf = { (float)pix.x, (float)pix.y };
+
+  // Valid pixel inside image bounds?
+  bool inside = pix.x < W && pix.y < H;
+  bool done = !inside;
+
+  // Retrieve Gaussian range for this tile
+  uint2 range = ranges[block.group_index().y * horizontal_blocks + block.group_index().x];
+  const int rounds = ((range.y - range.x + BLOCK_SIZE - 1) / BLOCK_SIZE);
+  int toDo = range.y - range.x;
+
+  // Shared memory buffers to batch load Gaussians
+  __shared__ int collected_id[BLOCK_SIZE];
+  __shared__ float2 collected_xy[BLOCK_SIZE];
+  __shared__ float4 collected_conic_opacity[BLOCK_SIZE];
+
+  // Initialize blending state
+  float T = 1.0f;                 // Transmittance (accumulated transparency)
+  uint32_t contributor = 0;      // Total count of attempted Gaussians
+  uint32_t last_contributor = 0; // Last index that contributed color
+  float C[CHANNELS] = { 0 };     // Final blended color
+  float expected_invdepth = 0.0f;
+
+  // Iterate over Gaussian batches
+  for (int i = 0; i < rounds; i++, toDo -= BLOCK_SIZE)
+  {
+    // Early exit if all threads in tile are done
+    int num_done = __syncthreads_count(done);
+    if (num_done == BLOCK_SIZE)
+    break;
+
+    // Fetch Gaussians to shared memory
+    int progress = i * BLOCK_SIZE + block.thread_rank();
+    if (range.x + progress < range.y)
+    {
+    int coll_id = point_list[range.x + progress];
+    collected_id[block.thread_rank()] = coll_id;
+    collected_xy[block.thread_rank()] = points_xy_image[coll_id];
+    collected_conic_opacity[block.thread_rank()] = conic_opacity[coll_id];
+    }
+    block.sync();
+
+    // Blend each Gaussian from this batch
+    for (int j = 0; !done && j < min(BLOCK_SIZE, toDo); j++)
+    {
+    contributor++;
+
+    // Compute elliptical Gaussian falloff using conic filter (Zwicker 2001)
+    float2 xy = collected_xy[j];
+    float2 d = { xy.x - pixf.x, xy.y - pixf.y };
+    float4 con_o = collected_conic_opacity[j];
+    float power = -0.5f * (con_o.x * d.x * d.x + con_o.z * d.y * d.y) - con_o.y * d.x * d.y;
+
+    // Skip if outside 2σ ellipse
+    if (power > 0.0f)
+      continue;
+
+    // Compute alpha from opacity and spatial falloff
+    float alpha = min(0.99f, con_o.w * exp(power));
+    if (alpha < 1.0f / 255.0f)
+      continue;
+
+    // Front-to-back alpha compositing: update transmittance
+    float test_T = T * (1 - alpha);
+    if (test_T < 0.0001f)
+    {
+      done = true;
+      continue;
+    }
+
+    // Blend color into output
+    for (int ch = 0; ch < CHANNELS; ch++)
+      C[ch] += features[collected_id[j] * CHANNELS + ch] * alpha * T;
+
+    // Accumulate inverse depth (for optional depth supervision)
+    if (invdepth)
+      expected_invdepth += (1 / depths[collected_id[j]]) * alpha * T;
+
+    T = test_T;
+    last_contributor = contributor;
+    }
+  }
+
+  // Write final color and metadata to global memory
+  if (inside)
+  {
+    final_T[pix_id] = T;
+    n_contrib[pix_id] = last_contributor;
+
+    for (int ch = 0; ch < CHANNELS; ch++)
+    out_color[ch * H * W + pix_id] = C[ch] + T * bg_color[ch];
+
+    if (invdepth)
+    invdepth[pix_id] = expected_invdepth;
+  }
+  }
+  ```
