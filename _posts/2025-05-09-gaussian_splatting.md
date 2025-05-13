@@ -55,6 +55,10 @@ While NeRF and its variants have achieved impressive photorealism in novel view 
 
 Introduced by [Kerbl et al., 2023](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/), Gaussian Splatting replaces neural field representations with a compact, interpretable formulation that enables fast optimization, real-time rendering, and high-fidelity view synthesis.
 
+<div style="text-align: center;">
+    <img src="/images/GS/paper.png" alt="Figure 02">
+</div>
+
 ## 2. 3D Gaussian Representation
 
 3D Gaussian Splatting is a real-time rendering method that represents scenes using millions of Gaussian primitives instead of triangles. Starting from a sparse SfM point cloud and calibrated cameras, Gaussians are optimized with **adaptive density control** to refine their placement and appearance. **A fast, differentiable tile-based rasterizer** then enables high-quality rendering with competitive training times, supporting interactive exploration of photorealistic 3D scenes.
@@ -87,6 +91,10 @@ This formulation is mathematically equivalent to the volumetric rendering equati
 
 Each point in the scene is modeled as a **3D anisotropic Gaussian**, which is differentiable and can be efficiently projected into 2D splats for rasterization. However, Structure-from-Motion (SfM) point clouds are often sparse and lack reliable surface normals (noisy), making direct surface modeling difficult.
 
+<div style="text-align: center;">
+    <img src="/images/GS/spalts.png" alt="Figure 03">
+</div>
+
 To address this, each Gaussian is defined by a **3D covariance matrix** $\Sigma_i$ in world space, centered at its mean position $\mu_i$. The spatial influence of a Gaussian is given by:
 
 $$
@@ -116,6 +124,10 @@ So the projected Gaussian in camera coordinates becomes:
 $$
 \mathcal{N}(\mu_{\text{camera}, i}, \Sigma_{\text{camera}, i})
 $$
+
+<div style="text-align: center;">
+    <img src="/images/GS/transformation.png" alt="Figure 04">
+</div>
 
 **📡 Ray Space Transformation:**
 
@@ -198,6 +210,10 @@ This allows the system to perform stable and efficient updates while preserving 
 
 While optimizing parameters improves accuracy, maintaining an effective Gaussian distribution requires dynamic adaptation of their count and placement.
 
+<div style="text-align: center;">
+    <img src="/images/GS/control_density.png" alt="Figure 05">
+</div>
+
 The density control loop periodically adjusts the Gaussian set with three operations:
 
 - **Cloning**: Gaussians with high position gradient magnitude are duplicated and shifted to improve coverage in under-represented areas.
@@ -217,6 +233,10 @@ This densification/pruning is run every few hundred iterations (e.g., every 100 
 - Adds detail where needed
 - Keeps parameter count efficient
 - Prevents under-reconstruction and over-reconstruction regions.
+
+<div style="text-align: center;">
+    <img src="/images/GS/densification_algo.png" alt="Figure 06">
+</div>
 
 ## 4. Differentiable Tile-Based Rasterization
 
@@ -304,9 +324,17 @@ $$
 
 This avoids storing full blending chains and allows efficient gradient computation for all contributing Gaussians.
 
+<div style="text-align: center;">
+    <img src="/images/GS/rasterization_algo.png" alt="Figure 07">
+</div>
+
 ## 5. Training Pipeline
 
 The training process for 3D Gaussian Splatting optimizes scene representation by minimizing the photometric discrepancy between rendered and ground-truth images. It is fully differentiable and GPU-accelerated, enabling fast convergence compared to implicit methods like NeRF.
+
+<div style="text-align: center;">
+    <img src="/images/GS/pipeline.png" alt="Figure 08">
+</div>
 
 **Initialization:**
 
