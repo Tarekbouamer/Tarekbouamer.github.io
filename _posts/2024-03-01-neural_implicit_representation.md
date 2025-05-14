@@ -47,17 +47,17 @@ In this tutorial, we will approach the Neural Implicit Representation principals
 
 ## Definition
 
-Implicit Neural Representation (_INR_) is a novel concept within machine learning and computer graphics that represents an object or scene as a continuous function, rather than an explicit surface or structure. Implicit Neural Representation aims to learn a mathematical function $ f(x, y) = 0 $ or implicit representation that can generate the desired data points.
+Implicit Neural Representation (_INR_) is a novel concept within machine learning and computer graphics that represents an object or scene as a continuous function, rather than an explicit surface or structure. Implicit Neural Representation aims to learn a mathematical function \\(f(x, y) = 0\\) or implicit representation that can generate the desired data points.
 
 <div align="center">
   <img src="/images/NIR/nir.png" alt="NIR">
 </div>
 
-Learning-based approaches for 3D reconstruction have gained popularity for its rich representation to 3D models, compared to the traditional Multi View Stereo (_MVS_) algorithms. Through literature, Deep learning approaches are categorized into three representations:
+Learning-based approaches for 3D reconstruction have gained popularity for their rich representation of 3D models, compared to traditional Multi View Stereo (_MVS_) algorithms. Through literature, Deep Learning approaches are categorized into three representations:
 
 ## Representations
 
-_What is a good representation ?_
+_What is a good representation?_
 
 <div align="center">
   <img src="/images/NIR/nir_representations.png" alt="NIR">
@@ -65,110 +65,119 @@ _What is a good representation ?_
 
 ### Voxel
 
-Voxel are easy to process by neural network and commonly used in generative 3D tasks, by discretizing  the space into a set of 3D voxel grids. However, Due to its cubic memory $O(n^3)$, the voxels representations are limited to small resolutions of the underlying 3D grid. [2]
+Voxels are easy to process by neural networks and commonly used in generative 3D tasks by discretizing the space into a set of 3D voxel grids. However, due to their cubic memory \\(O(n^3)\\), voxel representations are limited to small resolutions of the underlying 3D grid. [2]
 
 ### Point
 
-As an alternative to the voxel representation, the output can be represented as a set of 3D point clouds.However, the point representation doesn't preserve the model connectivity and topology, hence require a post-processing steps to extract 3D mesh. The point representation is also limited by the number of points, which affects the resolution of the final model. [3]
+As an alternative to the voxel representation, the output can be represented as a set of 3D point clouds. However, the point representation doesn't preserve model connectivity and topology, hence requiring post-processing steps to extract a 3D mesh. The point representation is also limited by the number of points, which affects the resolution of the final model. [3]
 
 ### Mesh
 
-Representing the output as a set of triangles (vertices and faces) is a very complicated structure that requires reference template from the same object class. Yet, the approach is still limited by the memory requirements and the resolution of the mesh. [4]
+Representing the output as a set of triangles (vertices and faces) is a very complicated structure that requires a reference template from the same object class. Yet, the approach is still limited by memory requirements and the resolution of the mesh. [4]
 
 ### Occupancy Networks
 
-the _Occupancy Networks_ implicitly represents the 3D surface as a decision boundary of a nonlinear classifier, and for every point $\mathbf{p} \in \mathbb{R}^3$ in the 3D space, the network predicts the probability of the point being inside the object. The occupancy function is defined as:
+The _Occupancy Network_ implicitly represents the 3D surface as a decision boundary of a nonlinear classifier. For every point \\(\mathbf{p} \in \mathbb{R}^3\\) in 3D space, the network predicts the probability of the point being inside the object. The occupancy function is defined as:
 
 $$
 \mathbf{o} :\mathbb{R}^3 \rightarrow [0, 1]
 $$
 
-The occupancy function is approximated by a deep neural network $f_\theta$ with parameters $\theta$ that takes an observation $\mathbf{x} \in X$ as input condition (ex. image, point clouds,...), and it has a function from $\mathbf{p} \in \mathbb{R}^3$ to $\mathbb{R}$ as an occupancy probability.
+The occupancy function is approximated by a deep neural network \\(f_\theta\\) with parameters \\(\theta\\), that takes an observation \\(\mathbf{x} \in X\\) as input condition (e.g., image, point cloud...), and maps \\(\mathbf{p} \in \mathbb{R}^3\\) to a probability in \\([0, 1]\\).
 
-For each input pair $(p,x)$, we can write the _occupancy network function_ as:
+For each input pair \\((p, x)\\), we can write the _occupancy network function_ as:
 
 $$
-f_\theta : \mathbb{R}^3  \times X \rightarrow [0, 1]
+f_\theta : \mathbb{R}^3 \times X \rightarrow [0, 1]
 $$
 
 <div align="center">
   <img src="/images/NIR/nir_arch.png" alt="NIR">
 </div>
 
-The advantage of the occupancy network is a continuous representation with an infinite resolution, the representation is not restricted to a specific class as in the mesh representation and it has a low memory footprint.
+The advantage of the occupancy network is its continuous representation with infinite resolution. It is not restricted to a specific class as in mesh representations and has a low memory footprint.
 
-To learn the parameters $\theta$, we randomly sample 3D points (ex. $K=2048$) in the volume and minimize the binary cross-entropy $BCE$ loss function:
+To learn the parameters \\(\theta\\), we randomly sample 3D points (e.g., \\(K = 2048\\)) in the volume and minimize the binary cross-entropy (\\(BCE\\)) loss function:
 
 $$
-L(\theta, \psi) = \sum_{j=0}^{N} BCE(f_\theta (p_{ij}, z{i}) , o_{ij} )
+L(\theta, \psi) = \sum_{j=0}^{N} BCE(f_\theta(p_{ij}, z_i), o_{ij})
 $$
 
 - In practice, we sample the 3D points uniformly inside the bounding box of the object.
 
-#### Appearance, Geometry, and Surfaces properties
+#### Appearance, Geometry, and Surface Properties
 
-The implicit representation can be extended to have more objects properties and reasoning, such as the surface lightening and the view point. The occupancy network can conditioned by the viewing direction $v$ and light location $l$ for any 3D point $p$, for each input tuple $(p,v,l)$, we can write the _occupancy network function_ as:
+The implicit representation can be extended to include more object properties and reasoning, such as surface lighting and viewpoint. The occupancy network can be conditioned by the viewing direction \\(v\\) and light location \\(l\\) for any 3D point \\(p\\). For each input tuple \\((p, v, l)\\), we write the _occupancy network function_ as:
 
 $$
-f_\theta : \mathbb{R}^3  \times \mathbb{R}^3 \times \mathbb{R}^M \rightarrow [0, 1]
+f_\theta : \mathbb{R}^3 \times \mathbb{R}^3 \times \mathbb{R}^M \rightarrow [0, 1]
 $$
 
 <div align="center">
   <img src="/images/NIR/nir_light_view.png" alt="NIR">
 </div>
 
-The network encodes both an input 2D image and the corresponding 3D shape into a latent representations $z$ and $s$, as a conditioning to the occupancy network. The model predicts the occupancy probability for each 3D point $p$ and the color $c$, _Surface Light Fields_.
+The network encodes both an input 2D image and the corresponding 3D shape into latent representations \\(z\\) and \\(s\\), as a conditioning to the occupancy network. The model predicts the occupancy probability for each 3D point \\(p\\) and the color \\(c\\), i.e., _Surface Light Fields_.
 
-- The light $l$,  denotes the light source parameters, such as the light direction, color, and intensity.
+- The light \\(l\\) denotes the light source parameters, such as direction, color, and intensity.
 
-The network is trained to minimize the photometric loss function between the predicted image $I$ and the input image $\hat{I}$:
+The network is trained to minimize the photometric loss function between the predicted image \\(I\\) and the input image \\(\hat{I}\\):
 
 $$
-L(I, \hat{I}) = \left \| I - \hat{I}   \right \|_1
+L(I, \hat{I}) = \left\| I - \hat{I} \right\|_1
 $$
 
 #### Convolutional Occupancy Networks
 
-> Large-scale representation learning for 3D scenes ?
+> Large-scale representation learning for 3D scenes?
 
-Implicit Neural Representations have demonstrates a good results for small objects and small scenes, however, most of approaches fails to scale to large scenes, due to:
+Implicit Neural Representations have demonstrated good results for small objects and scenes. However, most approaches fail to scale to large scenes due to:
 
-- The previous architectures does incorporate the local information in the observation.
-- It doesn't exploit and capture the translational equivariance of the 3D scene.
+- Previous architectures not incorporating local information in the observation.
+- A lack of exploitation of translational equivariance in 3D scenes.
 
-The Convolutional Occupancy Networks introduces the  convolutional networks into the implicit modeling for an accurate and rich large scale 3D scenes. The convolutional network incorporates the local as well the global information, and the inductive biases to obtain a better generalization, more specifically the translation equivariance.
+**Convolutional Occupancy Networks** introduce convolutional networks into implicit modeling for accurate and rich large-scale 3D scenes. The convolutional backbone incorporates both local and global information, leveraging inductive biases—specifically translational equivariance—for better generalization.
 
-We process the inputs thought an encoder to extract feature embeddings, we use PointNet for input point clouds and a 3D-CNN for a input voxel.
+We process the inputs through an encoder to extract feature embeddings:
 
-- **Planar Encoding**:
+- PointNet for input point clouds
+- 3D-CNN for input voxels
+
+---
+
+### **Planar Encoding**
 
 <div align="center">
   <img src="/images/NIR/nir_plane.png" alt="NIR">
 </div>
 
-For each input point, we perform an orthographic projection onto a canonical plane, aligned with the axes of the coordinate frame, which we discretize at a resolution of H × W pixel cells.
+For each input point, we perform an orthographic projection onto a canonical plane aligned with the coordinate axes, discretized at resolution \\(H \times W\\) pixels.
 
-We aggregate features projecting onto the same pixel using average
-pooling, resulting in planar features with dimensionality $H × W × d$.
+We aggregate features projected onto the same pixel using average pooling, resulting in planar features of dimensionality \\(H \times W \times d\\).
 
-- **Volume Encoding**:
+---
+
+### **Volume Encoding**
 
 <div align="center">
   <img src="/images/NIR/nir_volume.png" alt="NIR">
 </div>
 
-The volumetric encodings represents the 3D information better than a 2D planar, However, the resolution is restricted by the memory footprint.
-The average pooling is performed  all over the voxel cell, resulting in a feature volume with dimensionality $H × W × D × d$.
+Volumetric encodings capture 3D information better than 2D planar encodings. However, their resolution is limited by memory constraints. Average pooling is performed over the voxel cells, producing a feature volume of shape \\(H \times W \times D \times d\\).
 
-- **Convolutional Decoder**:
+---
 
-The convolutional decoder processes the resulting feature planes and feature volumes using 2D and 3D U-Net network to aggregate the local and global information, and the equivariance to translation properties in the output features, enabling structured reasoning.
+### **Convolutional Decoder**
 
-- **Occupancy Prediction**:
+The convolutional decoder processes the resulting feature planes and volumes using 2D and 3D U-Net architectures. These capture both local and global contexts while preserving translation equivariance in the output features, enabling structured reasoning.
 
-Given the aggregated features, we predict the occupancy probability for each 3D point $p$ by projecting each point onto the corresponding plane and query the feature vector using bilinear interpolation. For multiple planes, we sum the features of all planes. For the volume, we query the feature vector using trilinear interpolation.
+---
 
-For a resulting feature vector $x$ at point $p$, denoted as $\psi(p,x)$, we predict the occupancy probability using fully connected layers occupancy network, as:
+### **Occupancy Prediction**
+
+Given the aggregated features, we predict the occupancy probability for each 3D point \\(p\\) by projecting it onto corresponding planes and querying feature vectors using bilinear interpolation. For multiple planes, their features are summed. For volume features, trilinear interpolation is used.
+
+Let \\(x\\) be the resulting feature vector at point \\(p\\), and \\(\psi(p, x)\\) the queried feature. The occupancy probability is predicted via a fully connected occupancy network:
 
 $$
 f_\theta : (p, \psi(p,x)) \rightarrow [0, 1]
@@ -177,160 +186,162 @@ $$
 <div style="display: flex; align-items: center;">
   <div style="flex: 1;">
 
-- In comparison to the occupancy network, the convolutional occupancy network has a better accuracy and a faster convergence.
+- Compared to vanilla occupancy networks, convolutional occupancy networks offer better accuracy and faster convergence.
+- They generalize well and scale to large scenes using a hierarchical sliding-window approach.
 
-- The convolutional occupancy network shows a good generalization and scalability for large scenes, we can use a hierarchical approach to process the scene using sliding window.  
-  
   </div>
   <div style="flex: 1;">
-    <img src="/images/NIR/nir_large_scene.png" alt="NIR"\>
+    <img src="/images/NIR/nir_large_scene.png" alt="NIR">
   </div>
 
 </div>
 
-- In comparison to the occupancy network, the convolutional occupancy network has a better accuracy and a faster convergence.
-
-- The convolutional occupancy network shows a good generalization and scalability for large scenes, we can use a hierarchical approach to process the scene using sliding window.
+---
 
 ## Mesh Extraction
 
-The mesh extraction is a post-processing step that extracts the 3D mesh from the occupancy network.
+Mesh extraction is a post-processing step used to convert the continuous occupancy field into a 3D mesh.
 
-### Marching Cubes
+### **Marching Cubes**
 
-The marching cubes algorithm is a method for extracting a polygonal mesh of an isosurface from a 3D scalar field. The iso-surface is formed by connecting the vertices of the cubes that are intersected by the iso-surface.
+The Marching Cubes algorithm extracts a polygonal mesh from a 3D scalar field. It identifies the isosurface by evaluating scalar values at cube vertices and generates triangles accordingly.
 
-Algorithm:
+**Algorithm steps:**
 
-- We divide the 3D space into a grid of cubes (8 vertices).
-- For each cube, we evaluate the cube vertices and compare them to the threshold value $\tau$.
-- We construct a triangulation for each cube, based on the vertices that are intersected by the iso-surface.
-- Based on the triangulations, We generate polygons for each cube  and we merge the polygons to form the final mesh.
-- We optimize the mesh by removing the duplicated vertices and edges.
+- Divide the 3D space into a grid of cubes (each with 8 vertices).
+- Evaluate each vertex and compare its value to a threshold \\(\tau\\).
+- Determine cube configuration and triangulate the intersected edges.
+- Generate polygons per cube and merge them into a full mesh.
+- Optimize the mesh by removing duplicate vertices and redundant edges.
 
 ### Multiresolution Iso-Surface Extraction (MISE)
 
-MISE is a method that incrementally building an octree to extract high resolution meshes from the occupancy function.
+MISE is a method for incrementally building an octree to extract high-resolution meshes from the occupancy function.
 
 <div align="center">
   <img src="/images/NIR/nir_MISE.png" alt="NIR">
 </div>
 
-- We divide the 3D space into an initial resolution (ex. $32^2$), and we compute the occupancy function $f_\theta(p,x)$ for each cell.
+- We divide the 3D space into an initial resolution (e.g., \\(32^3\\)), and compute the occupancy function \\(f_\theta(p, x)\\) for each cell.
 
-- We set a threshold value $\tau$ and we mark a grid points "occupied" if the occupancy function $f_\theta(p,x)$ is greater than the threshold.
+- We set a threshold value \\(\tau\\), and mark a grid point as "occupied" if \\(f_\theta(p, x) > \tau\\).
 
-- We subdivide the query space into 8 sub-cells and we evaluate the occupancy function $f_\theta(p,x)$ for each cell.
+- We subdivide each occupied cell into 8 sub-cells and re-evaluate \\(f_\theta(p, x)\\).
 
-- We repeat the process until we reach the desired resolution.
+- The process repeats until the desired resolution is reached.
 
-- At the end, we apply the marching cubes algorithm to extract an approximate iso-surface, defined by the threshold value $\tau$: { $ \ p \in \mathbb{R}^3  \ \ | \ \ f_\theta(p, x) = \tau $ }
+- Finally, we apply the marching cubes algorithm to extract the iso-surface defined by the threshold \\(\tau\\):
+
+$$
+\left\{ p \in \mathbb{R}^3 \ \big| \ f_\theta(p, x) = \tau \right\}
+$$
+
+---
 
 ## Differentiable Volumetric Rendering
 
-> Learning from images only !
+> Learning from images only!
 
-Learning based 3D reconstruction methods have shown impressive results, however these methods require 3D supervision from the real world or synthetic data.
+Learning-based 3D reconstruction methods have shown impressive results, but typically require 3D supervision from real-world or synthetic data.
 
-<dev>
+<div align="center">
   <img src="/images/NIR/dvr_arch.png" alt="NIR">
-</dev>
+</div>
 
-_Differentiable Rendering_ aims to learn 3D reconstruction from RGB images only, by using the concept of implicit representation in deriving the depth gradients.
+**Differentiable Rendering** aims to learn 3D reconstruction from RGB images only, by using implicit representations to derive depth gradients.
 
-The input image is processed with an encoder to extract latent representation $z \in \mathbb{Z} $ as a conditioning to the occupancy network $f_\theta$, as introduced in the Occupancy Networks. The 3D surface shape is determined by a threshold value $\tau$, such as $f_\theta(p, z) = \tau$.
+An input image is processed with an encoder to extract a latent representation \\(z \in \mathbb{Z}\\), which conditions the occupancy network \\(f_\theta\\). The 3D surface shape is defined by a threshold \\(\tau\\), such that \\(f_\theta(p, z) = \tau\\).
 
-The texture of a 3D shape can be described using a texture field $t_\theta: \mathbb{R}^3 \times \mathbb{Z} \rightarrow \mathbb{R}^3$; which regresses the RGB color value for every point $p \in \mathbb{R}^3 $, conditioned on the same latent representation $z \in \mathbb{Z}$. The texture of an object is determined by the value of $t_\theta$ at the surface $f_\theta = \tau$.
+The texture of a 3D shape is modeled using a texture field \\(t_\theta: \mathbb{R}^3 \times \mathbb{Z} \rightarrow \mathbb{R}^3\\), which regresses the RGB color for each point \\(p \in \mathbb{R}^3\\), conditioned on \\(z\\). The texture on the surface corresponds to values of \\(t_\theta\\) at \\(f_\theta = \tau\\).
 
-<dev>
+<div align="center">
   <img src="/images/NIR/dvr_backpropagation.png" alt="NIR">
-</dev>
+</div>
 
-We define the photometric loss function between the input image $I$, and the rendered image $\hat{I}$ as:
+We define the photometric loss between the rendered image \\(\hat{I}\\) and the ground truth image \\(I\\) as:
 
 $$
-L(\hat{I}, I) = \sum_{u} \left \| \hat{I_u} - I_u  \right \|_1
+L(\hat{I}, I) = \sum_{u} \left\| \hat{I}_u - I_u \right\|_1
 $$
 
-- $u$ denotes the pixel location in the image.
+- \\(u\\) denotes the pixel location.
 
-For a camera located at $r_0$, we can render the image $\hat{I}$ at pixel location $u$ by casting a ray from the camera center $r_0$ through the pixel location $u$, and we compute the intersection point $\hat{p}$ with the surface $f_\theta(p) = \tau$.
+For a camera at location \\(r_0\\), we render \\(\hat{I}\\) at pixel \\(u\\) by casting a ray from \\(r_0\\) through \\(u\\), and compute the intersection \\(\hat{p}\\) with the surface \\(f_\theta(p) = \tau\\).
 
-For any pixel $u$, this ray can written as $\hat{p} = r_0 + d \cdot w$, where $d$ is the depth value. Since $\hat{p}$ depends on $\theta$. The partial derivative of $\hat{p}$ with respect to $\theta$ can be computed using the chain rule:
+Each ray is given by \\(\hat{p} = r_0 + d \cdot w\\), where \\(d\\) is the depth. Since \\(\hat{p}\\) depends on \\(\theta\\), we compute its derivative using the chain rule:
 
 $$
 \frac{\partial \hat{p}}{\partial \theta} = w \cdot \frac{\partial \hat{d}}{\partial \theta}
 $$
 
-Applying the chain rule to the photometric loss function $L$ , we can compute the partial derivative of the loss function with respect to $\theta$ as:
+Applying the chain rule to the photometric loss:
 
 $$
-\frac{\partial L}{\partial \theta} = \sum_{u} \frac{\partial L}{\partial \hat{I_u}} \cdot \frac{\partial \hat{I_u}}{\partial \theta}
+\frac{\partial L}{\partial \theta} = \sum_{u} \frac{\partial L}{\partial \hat{I}_u} \cdot \frac{\partial \hat{I}_u}{\partial \theta}
 $$
 
 $$
-\frac{\partial \hat{I_u}}{\partial \theta} =
+\frac{\partial \hat{I}_u}{\partial \theta} =
 \frac{\partial t_{\theta}(\hat{p})}{\partial \theta} + \frac{\partial t_{\theta}(\hat{p})}{\partial \hat{p}} \cdot \frac{\partial \hat{p}}{\partial \theta}
 $$
 
-Solving for $\frac{\partial \hat{p}}{\partial \theta}$, we can write the partial derivative of the loss function with respect to $\theta$ as:
+To solve for \\(\frac{\partial \hat{p}}{\partial \theta}\\), we apply the surface constraint \\(f_\theta(\hat{p}) = \tau\\) and obtain:
 
 $$
-\frac{\partial \hat{p}}{\partial \theta} = w \cdot \frac{\partial \hat{d}}{\partial \theta} = - w (\frac{\partial f_\theta(\hat{p})}{\partial \theta} \cdot w)^{-1} \cdot \frac{\partial f_\theta(\hat{p})}{\partial \theta}
+\frac{\partial \hat{p}}{\partial \theta} = w \cdot \frac{\partial \hat{d}}{\partial \theta}
+= -w \cdot \left(\frac{\partial f_\theta(\hat{p})}{\partial \hat{p}} \cdot w \right)^{-1} \cdot \frac{\partial f_\theta(\hat{p})}{\partial \theta}
 $$
 
-Calculating the gradient of the surface depth $\hat{d}$ with reference to the network parameters $\theta$ only involves calculating the gradient of $f_{\theta}$ at $\hat{p}$ with reference to  the network parameters $\theta$ and the surface point $\hat{p}$.
+Hence, computing the gradient of the surface depth \\(\hat{d}\\) with respect to \\(\theta\\) involves differentiating \\(f_\theta\\) at \\(\hat{p}\\) with respect to both \\(\theta\\) and the spatial location \\(\hat{p}\\).
 
 ## Neural Radiance Fields
 
-> Can we render a novel photo-realistic view of the scene from an implicit representation ?
+> Can we render a novel photo-realistic view of the scene from an implicit representation?
 
 <div align="center">
   <img src="/images/NIR/nerf_arch.png" alt="NIR">
 </div>
 
-Neural Radiance Fields (_NeRF_) is a method for synthesizing novel views of a scene from a sparse set of input views. NeRF maps a 3D spatial location $\mathbf{x} \in \mathbb{R}^3$ and a 2D viewing direction $\mathbf{d} \in \mathbb{R}^2$ to color $\mathbf{c} \in \mathbb{R}^3$ and density $\sigma \in \mathbb{R}$, The network function is represented as a MLP network and defined as:
+Neural Radiance Fields (_NeRF_) is a method for synthesizing novel views of a scene from a sparse set of input views. NeRF maps a 3D spatial location \\(\mathbf{x} \in \mathbb{R}^3\\) and a 2D viewing direction \\(\mathbf{d} \in \mathbb{R}^2\\) to a color \\(\mathbf{c} \in \mathbb{R}^3\\) and a volume density \\(\sigma \in \mathbb{R}\\). The function is implemented as an MLP and defined as:
 
 $$
 f: (\mathbf{x}, \mathbf{d}) \rightarrow (\mathbf{c}, \sigma)
 $$
 
-- Density $\sigma$ describes the opacity of a 3D point in the scene. For a consistent multi-view representation, we predict the density $\sigma$ from the input location  $\mathbf{x}$ only.
+- **Density** \\(\sigma\\) describes the opacity of a 3D point and is predicted solely from \\(\mathbf{x}\\).
+- **Color** \\(\mathbf{c}\\) is predicted based on both \\(\mathbf{x}\\) and the viewing direction \\(\mathbf{d}\\).
+- \\(d\\) is the direction from the camera center to the 3D point.
 
-- The color $\mathbf{c}$ is predicted from the input location $\mathbf{x}$ and the viewing direction $\mathbf{d}$.
-
-- $d$ represents the viewing direction, which is the direction from the camera center to the 3D point.
-
-Unlike to DVR, NeRF doesn't evaluate the color on the ray at the surface, instead it evaluates the color/density at multiple points along the ray by integrating the color/density along the ray.
+Unlike DVR, NeRF does not evaluate color only at the surface intersection. Instead, it evaluates color and density at multiple points along the ray and integrates them.
 
 <div align="center">
   <img src="/images/NIR/nerf_ray.png" alt="NIR">
 </div>
 
-The rendering equation for a ray $r(t) = r_0 + t \cdot d$ is defined as:
+The rendering equation for a ray \\(r(t) = r_0 + t \cdot d\\) is:
 
 $$
 C \approx \sum_{i=1}^{N} T_i \cdot \sigma_i \cdot C_i
 $$
 
-- $ci$ is the color of the $i$-th point along the ray, and $T_i$ is the weight.
+- \\(C_i\\) is the color at the \\(i\\)-th sample point,  
+- \\(T_i\\) is the accumulated transmittance weight.
 
-- Alpha $\alpha_{i}$ is the accumulated density along the ray, and it is defined as:
+The **alpha** \\(\alpha_i\\), or opacity at each point, is defined as:
 
 $$
-\alpha_{i} = 1 - \exp^{(-\sigma_{i} \cdot \Delta t)}
+\alpha_i = 1 - \exp(-\sigma_i \cdot \Delta t)
 $$
-**NeRF Model**:
+
+---
+
+### **NeRF Model**
 
 ```python
 class NeRF(nn.Module):
     def __init__(self, in_features=3, hidden_features=256, out_features=4, num_layers=8, viewdir_features=128):
         super(NeRF, self).__init__()
-
-        # Define MLP for volume density prediction
         self.density_mlp = self._make_mlp(in_features, hidden_features, out_features, num_layers)
-
-        # Define MLP for view-dependent RGB color prediction
         self.viewdir_mlp = self._make_mlp(in_features + viewdir_features, hidden_features, out_features, 1)
 
     def _make_mlp(self, in_features, hidden_features, out_features, num_layers):
@@ -343,23 +354,17 @@ class NeRF(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, coords, view_dir):
-        # Process input coordinates with density MLP
         density_feature = self.density_mlp(coords)
-        sigma = torch.sigmoid(density_feature[:, 0])  # Extract sigma from the output
-
-        # Concatenate the feature vector with view direction
+        sigma = torch.sigmoid(density_feature[:, 0])
         view_input = torch.cat([density_feature[:, 1:], view_dir], dim=1)
-
-        # Predict view-dependent RGB color using viewdir MLP
         color = torch.sigmoid(self.viewdir_mlp(view_input))
-
         return sigma, color
 ```
 
-**NeRF Training**: We sample a set of rays from the input images, and we optimize the network parameters $\theta$ to minimize the reconstruction loss function:
+**NeRF Training**: We sample a set of rays from the input images and optimize the network parameters \(\theta\) to minimize the reconstruction loss function:
 
 $$
-  L(\theta) = min_{\theta} \sum_{i=1}^{N} \left \| \hat{C_i} - C_i  \right \|_2^2
+L(\theta) = \min_{\theta} \sum_{i=1}^{N} \left\| \hat{C}_i - C_i \right\|_2^2
 $$
 
 ```python
@@ -376,14 +381,12 @@ def nerf_loss(sigma, color, target_color):
     return loss
 ```
 
-- The sampling strategy is important for the training, we sample the rays from the input images, and we sample the points along the ray using a coarse-to-fine strategy, where we sample more points near the surface.
-
-- NeRF model is a view dependent model, where the color changes with the viewing direction.
-
-- Position encoding, such as fourier features, is used to encode the 3D spatial location $\mathbf{x}$ and the 2D viewing direction $\mathbf{d}$, helps the model to represent higher frequency details, in low dimensional space (MLP), where:
+- **Sampling Strategy**: We sample rays from the input images, and along each ray, we sample points using a **coarse-to-fine** strategy—more points are sampled near the surfaces.
+- The NeRF model is **view-dependent**, meaning the predicted color \(\mathbf{c}\) varies with the viewing direction \(\mathbf{d}\).
+- **Positional Encoding** (e.g., Fourier features) is applied to the 3D location \(\mathbf{x}\) and the viewing direction \(\mathbf{d}\) to enable the MLP to represent high-frequency variations:
 
 $$
-\gamma(\mathbf{x}) = \left [ \sin(2^0 \pi \mathbf{x}), \cos(2^0 \pi \mathbf{x}), ..., \sin(2^N \pi \mathbf{x}), \cos(2^N \pi \mathbf{x}) \right ]
+\gamma(\mathbf{x}) = \left[ \sin(2^0 \pi \mathbf{x}), \cos(2^0 \pi \mathbf{x}), \dots, \sin(2^N \pi \mathbf{x}), \cos(2^N \pi \mathbf{x}) \right]
 $$
 
 ```python

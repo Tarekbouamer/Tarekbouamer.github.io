@@ -92,25 +92,25 @@ The mathematical foundation of Diffusion Models is based on the concept of gener
 
 The forward diffusion process is an essential component of Diffusion Models, where a clean data sample is progressively transformed into a noisier version over multiple steps.
 
-Given a data sample $ x_0 $ with a distribution $ x_0 \sim q(x_0) $, the forward diffusion process generates a sequence of increasingly noisy versions of this data by adding Gaussian noise at each of $ T $ steps. The noise introduced at each step $ t $ is characterized by a variance parameter $ \beta_t \in [0, 1] $. The conditional distribution of $ x_t $ given $ x_{t-1} $ is defined as:
+Given a data sample \\(x_0\\) with a distribution \\(x_0 \sim q(x_0)\\), the forward diffusion process generates a sequence of increasingly noisy versions of this data by adding Gaussian noise at each of \\(T\\) steps. The noise introduced at each step \\(t\\) is characterized by a variance parameter \\(\beta_t \in [0, 1]\\). The conditional distribution of \\(x_t\\) given \\(x_{t-1}\\) is defined as:
 
 $$
 q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1-\beta_t} \cdot x_{t-1}, \beta_t \mathbf{I}\right)
 $$
 
-Here, $ q(x_t \mid x_{t-1}) $ represents a Gaussian distribution where $ x_t $ has a mean of $ \sqrt{1-\beta_t} \cdot x_{t-1} $ and a variance of $ \beta_t \mathbf{I} $. As $ t $ increases, $ x_0 $ gradually loses its original features. In the limit as $ t \to \infty $, $ x_T $ becomes an isotropic Gaussian distribution:
+Here, \\(q(x_t \mid x_{t-1})\\) represents a Gaussian distribution where \\(x_t\\) has a mean of \\(\sqrt{1-\beta_t} \cdot x_{t-1}\\) and a variance of \\(\beta_t \mathbf{I}\\). As \\(t\\) increases, \\(x_0\\) gradually loses its original features. In the limit as \\(t \to \infty\\), \\(x_T\\) becomes an isotropic Gaussian distribution:
 
 $$
 x_T \sim \mathcal{N}(0, \mathbf{I})
 $$
 
-The distribution of the final noisy sample $ x_T $ given the initial data $ x_0 $ can be expressed as:
+The distribution of the final noisy sample \\(x_T\\) given the initial data \\(x_0\\) can be expressed as:
 
 $$
 q(x_{1:T} \mid x_0) = \prod_{t=1}^{T} q(x_t \mid x_{t-1})
 $$
 
-This equation describes a Markov chain, where the distribution of $ x_t $ depends solely on the previous state $ x_{t-1} $. To simplify the notation, we define $ \alpha_t = 1 - \beta_t $ and $ \bar{\alpha}_t = \prod_{i=1}^{t} \alpha_i $. Using these definitions, we can express $ x_t $ as:
+This equation describes a Markov chain, where the distribution of \\(x_t\\) depends solely on the previous state \\(x_{t-1}\\). To simplify the notation, we define \\(\alpha_t = 1 - \beta_t\\) and \\(\bar{\alpha}_t = \prod_{i=1}^{t} \alpha_i\\). Using these definitions, we can express \\(x_t\\) as:
 
 $$
 x_t = \sqrt{\alpha_t} x_{t-1} + \sqrt{1-\alpha_t} \epsilon_{t-1}
@@ -128,7 +128,7 @@ $$
 = \sqrt{\bar{\alpha}_t} x_0 + \sqrt{1-\bar{\alpha}_t} \epsilon
 $$
 
-Thus, the distribution of $ x_t $ given $ x_0 $ can be rewritten as:
+Thus, the distribution of \\(x_t\\) given \\(x_0\\) can be rewritten as:
 
 $$
 q(x_t \mid x_0) = \mathcal{N}\left(x_t; \sqrt{\bar{\alpha}_t} \cdot x_0, (1 - \bar{\alpha}_t) \mathbf{I}\right)
@@ -140,19 +140,19 @@ $$
 
 ### Inverse Diffusion
 
-The inverse diffusion process is the core generative mechanism in Diffusion Models. If we can reverse the process $ q(x_{t-1} \mid x_t) $, we will be able to re-create the true input data $ x_0 $, knowing that $ q(x_{t-1} \mid x_t) $ is also a Gaussian.
+The inverse diffusion process is the core generative mechanism in Diffusion Models. If we can reverse the process \\(q(x_{t-1} \mid x_t)\\), we will be able to re-create the true input data \\(x_0\\), knowing that \\(q(x_{t-1} \mid x_t)\\) is also a Gaussian.
 
-Unfortunately, the estimation of $ q(x_{t-1} \mid x_t) $ is intractable, so we need to approximate the process by using a learned model $ p_{\theta} $ to estimate the reverse process, where:
+Unfortunately, the estimation of \\(q(x_{t-1} \mid x_t)\\) is intractable, so we need to approximate the process by using a learned model \\(p_{\theta}\\) to estimate the reverse process, where:
 
 $$
 p_{\theta}(x_{t-1} \mid x_t) = \mathcal{N}\left(x_{t-1}; \mu_{\theta}(x_t, t), \sigma_{\theta}(x_t, t)\right)
 $$
 
-The parameters $ \mu_{\theta}(x_t, t) $ and $ \sigma_{\theta}(x_t, t) $ are learned by the model, and they represent the mean and standard deviation of the Gaussian distribution at each step $ t $.
+The parameters \\(\mu_{\theta}(x_t, t)\\) and \\(\sigma_{\theta}(x_t, t)\\) are learned by the model, and they represent the mean and standard deviation of the Gaussian distribution at each step \\(t\\).
 
 ### Training Diffusion Models
 
-Training Diffusion Models involves optimizing the parameters of the model. Specifically, we aim to train $ \mu_{\theta} $ to predict the mean $ \mu_{t} $ of the reverse process, given by:
+Training Diffusion Models involves optimizing the parameters of the model. Specifically, we aim to train \\(\mu_{\theta}\\) to predict the mean \\(\mu_t\\) of the reverse process, given by:
 
 $$
 \mu_{t} = \frac{1}{\sqrt{\alpha_{t}}}\left(x_{t} - \frac{1-\alpha_{t}}{\sqrt{1-\bar{\alpha}_{t}}} \epsilon_{t}\right)
@@ -168,7 +168,7 @@ $$
 = \mathbb{E}_{x_{0},t,\epsilon} \left[ \frac{\beta_{t}^{2}}{2 \alpha_{t} (1-\bar{\alpha}_{t}) ||\sigma_{\theta}||_{2}^{2}} ||\epsilon_{t}-\epsilon_{\theta}(\sqrt{\bar{\alpha}_{t}}x_{0} + \sqrt{1-\bar{\alpha}_{t}}\epsilon_{t})||^{2} \right]
 $$
 
-Thus, instead of directly predicting the mean of the Gaussian distribution, we predict the noise $ \epsilon_{t} $ that is added to the input $ x_{0} $ to generate the output $ x_{t} $ at each step $ t $.
+Thus, instead of directly predicting the mean of the Gaussian distribution, we predict the noise \\(\epsilon_t\\) that is added to the input \\(x_0\\) to generate the output \\(x_t\\) at each step \\(t\\).
 
 <div align="center">
   <img src="/images/DM/training.png" alt="Training Diffusion Models illustration">
@@ -176,13 +176,17 @@ Thus, instead of directly predicting the mean of the Gaussian distribution, we p
 
 ### Parametrisation
 
-The forward variance $ \beta_{t} $ can be set as a constant or determined by a schedule over time $ T $.
+The forward variance \\(\beta_{t}\\) can be set as a constant or determined by a schedule over time \\(T\\).
 
-**Linear**: In this approach, the variance increases linearly with $ t $, forming a sequence of constants $ \beta_{1}, \beta_{2}, \ldots, \beta_{T} $, where $ \beta_{1} < \beta_{2} < \ldots < \beta_{T} $. These values should be chosen relatively small compared to the normalized input $ x_{0} \in [-1, 1] $. Common choices include $ \beta_{1} = 10^{-4} $ and $ \beta_{T} = 0.02 $.
+**Linear**: In this approach, the variance increases linearly with \\(t\\), forming a sequence of constants \\(\beta_{1}, \beta_{2}, \ldots, \beta_{T}\\), where \\(\beta_{1} < \beta_{2} < \ldots < \beta_{T}\\). These values should be chosen relatively small compared to the normalized input \\(x_{0} \in [-1, 1]\\). Common choices include \\(\beta_{1} = 10^{-4}\\) and \\(\beta_{T} = 0.02\\).
 
 **Cosine**: An improvement over the linear schedule is the use of a cosine-based variance schedule, which is defined by the following equations:
 
-$\bar{\alpha}_{t} = \frac{f(t)}{f(0)}, \quad f(t) = \cos{\left(\frac{t/T + s}{1 + s} \cdot \frac{\pi}{2}\right)}^2, \quad \beta_{t} = \text{clip}\left(1 - \frac{\bar{\alpha}_{t}}{\bar{\alpha}_{t-1}}, 0.999\right)$
+\\[
+\bar{\alpha}_{t} = \frac{f(t)}{f(0)}, \quad
+f(t) = \cos^2{\left(\frac{t/T + s}{1 + s} \cdot \frac{\pi}{2}\right)}, \quad
+\beta_{t} = \text{clip}\left(1 - \frac{\bar{\alpha}_{t}}{\bar{\alpha}_{t-1}}, 0.999\right)
+\\]
 
 <div align="center">
   <img src="/images/DM/linear_vs_cosine_schedular.png" alt="Linear vs Cosine Schedule illustration">
@@ -207,7 +211,7 @@ The U-Net architecture is commonly used due to its ability to handle inputs and 
   <img src="/images/DM/unet_architecture.png" alt="U-Net Architecture illustration">
 </div>
 
-The orignal implementation of the U-Net in diffusion models uses resnet blocks with diffusion time steps embedding with swish non-linearity, and group normalization. Additionaly, attention block was introduced.
+The original implementation of the U-Net in diffusion models uses ResNet blocks with diffusion time step embeddings, Swish non-linearity, and group normalization. Additionally, an attention block was introduced.
 
 ### Transformer-Based Models
 
@@ -217,13 +221,13 @@ The orignal implementation of the U-Net in diffusion models uses resnet blocks w
 
 Diffusion Models can be extended to perform conditional generation, which allows for the generation of data based on additional information such as text descriptions or class labels. This approach enhances the model's capability to produce outputs that are aligned with specific conditions, providing greater control over the generated data.
 
-In conditional generation, an additional input, such as a text description or class label, is integrated into the diffusion process. This conditioning guides the generation of images or other types of data to match the specified condition. Mathematically, the conditional distribution of $ x_t $ given $ x_{t-1} $ and the condition $ y $ is expressed as:
+In conditional generation, an additional input, such as a text description or class label, is integrated into the diffusion process. This conditioning guides the generation of images or other types of data to match the specified condition. Mathematically, the conditional distribution of \\(x_t\\) given \\(x_{t-1}\\) and the condition \\(y\\) is expressed as:
 
 $$
 p_{\theta}(x_{0:T} \mid y) = p(x_{T})\prod_{t=1}^{T} p_{\theta}(x_{t-1} \mid x_{t}, y)
 $$
 
-where the conditional probability $ p_{\theta}(x_{t-1} \mid x_{t}, y) $ follows a Gaussian distribution with mean $ \mu_{\theta}(x_t, t, y) $ and variance $ \sigma_{\theta}(x_t, t, y) $:
+where the conditional probability \\(p_{\theta}(x_{t-1} \mid x_{t}, y)\\) follows a Gaussian distribution with mean \\(\mu_{\theta}(x_t, t, y)\\) and variance \\(\sigma_{\theta}(x_t, t, y)\\):
 
 $$
 p_{\theta}(x_{t-1} \mid x_{t}, y) = \mathcal{N}\left(x_{t-1}; \mu_{\theta}(x_t, t, y), \sigma_{\theta}(x_t, t, y)\right)
@@ -231,7 +235,7 @@ $$
 
 ### Classifier-Guided Diffusion
 
-A common technique in conditional generation is classifier-guided diffusion. This involves training a classifier $ f_{\phi}(y \mid x_{t}, t) $ to provide guidance based on the noisy image $ x_{t} $ and the condition $ y $. The classifier helps steer the diffusion process towards generating data that aligns with the given condition by leveraging gradients.
+A common technique in conditional generation is classifier-guided diffusion. This involves training a classifier \\(f_{\phi}(y \mid x_{t}, t)\\) to provide guidance based on the noisy image \\(x_t\\) and the condition \\(y\\). The classifier helps steer the diffusion process towards generating data that aligns with the given condition by leveraging gradients.
 
 The gradient of the log probability of the classifier is used to influence the diffusion process. Specifically, the gradient of the log of a Gaussian distribution is given by:
 
@@ -239,15 +243,15 @@ $$
 \nabla_{x} \log \mathcal{N}(x; \mu, \sigma) = \frac{x - \mu}{\sigma^2} = \frac{\epsilon}{\sigma}
 $$
 
-where $ \epsilon \sim \mathcal{N}(0, I) $. This relates to the noise added during the diffusion process.
+where \\(\epsilon \sim \mathcal{N}(0, I)\\). This relates to the noise added during the diffusion process.
 
-The gradient of the diffusion process with respect to the noisy image $ x_{t} $ is:
+The gradient of the diffusion process with respect to the noisy image \\(x_t\\) is:
 
 $$
 \nabla_{x_{t}} \log q(x_{t}) = - \frac{\epsilon_{\theta}(x_{t}, t)}{\sqrt{1-\bar{\alpha}_{t}}}
 $$
 
-where $ \epsilon_{\theta}(x_{t}, t) $ represents the predicted noise at time $ t $.
+where \\(\epsilon_{\theta}(x_{t}, t)\\) represents the predicted noise at time \\(t\\).
 
 To incorporate the classifier's guidance, the joint distribution gradient is expressed as:
 
@@ -263,13 +267,13 @@ $$
 = - \frac{1}{\sqrt{1-\bar{\alpha}_{t}}}(\epsilon_{\theta}(x_{t}, t)) - \sqrt{1-\bar{\alpha}_{t}} \nabla_{x_{t}} \log f_{\phi} (y \mid x_{t}, t)
 $$
 
-This formulation results in a new classifier-guided noise predictor $ \bar{\epsilon}_{\theta} $:
+This formulation results in a new classifier-guided noise predictor \\(\bar{\epsilon}_{\theta}\\):
 
 $$
 \bar{\epsilon}_{\theta}(x_{t}, t) = \epsilon_{\theta}(x_{t}, t) - \sqrt{1-\bar{\alpha}_{t}} \nabla_{x_{t}} \log f_{\phi} (y \mid x_{t}, t)
 $$
 
-To further control the influence of the classifier, a scaling factor $ s $ is introduced:
+To further control the influence of the classifier, a scaling factor \\(s\\) is introduced:
 
 $$
 \bar{\epsilon}_{\theta}(x_{t}, t) = \epsilon_{\theta}(x_{t}, t) - \sqrt{1-\bar{\alpha}_{t}} s \nabla_{x_{t}} \log f_{\phi} (y \mid x_{t}, t)
@@ -285,7 +289,7 @@ This version aims to provide clearer explanations and context for each part of t
 
 Classifier-Free Guided Diffusion eliminates the need for a separate classifier by using a single network to handle both conditional and unconditional diffusion models. This approach allows for guidance without explicitly training an additional classifier.
 
-In this framework, $ p_{\theta}(x) $ represents the unconditional diffusion model, with a score estimator $\epsilon_{\theta}(x, t)$, while $ p_{\theta}(x \mid y) $ denotes the conditional diffusion model, with a score estimator $\epsilon_{\theta}(x, t, y)$. The unconditional model is a special case of the conditional model when no condition $ y $ is provided.
+In this framework, \\(p_{\theta}(x)\\) represents the unconditional diffusion model, with a score estimator \\(\epsilon_{\theta}(x, t)\\), while \\(p_{\theta}(x \mid y)\\) denotes the conditional diffusion model, with a score estimator \\(\epsilon_{\theta}(x, t, y)\\). The unconditional model is a special case of the conditional model when no condition \\(y\\) is provided.
 
 The gradient of the implicit classifier can be expressed using both conditional and unconditional score estimators:
 
@@ -323,7 +327,7 @@ $$
   <img src="/images/DM/cascaded_1.png" alt="Cascaded Diffusion Models illustration">
 </div>
 
-Cascaded Diffusion models were proposed to generate high-resolution images. To generate an image, we sample a low-resolution image from the first model and then use it as input to the second model to generate a higher-resolution image. This process can be repeated multiple times to generate images of even higher resolutions.
+Cascaded Diffusion Models were proposed to generate high-resolution images. To generate an image, we sample a low-resolution image from the first model and then use it as input to the second model to generate a higher-resolution image. This process can be repeated multiple times to generate images of even higher resolutions.
 
 <div align="center">
   <img src="/images/DM/cascaded_2.png" alt="Cascaded Diffusion Models illustration">
@@ -335,33 +339,39 @@ Cascaded Diffusion models were proposed to generate high-resolution images. To g
 
 Latent Diffusion Models (LDM), or Stable Diffusion Models, are a variant of diffusion models that use the latent representation in the diffusion process instead of the pixel/image representation. Compared to the high-dimensional pixel space, the latent space focuses on the important semantics/features of the input image, reducing training time and inference speed.
 
-The autoencoder $G$ is used to encode the image $x \in \mathbb{R}^{CHW}$ into a latent representation $z \in \mathbb{R}^{d}$ where $z = G(x)$. Then, the decoder $D$ is used to construct the image $x'$ from the latent representation $z$ as $x' = D(z)$.
+The autoencoder \\(G\\) is used to encode the image \\(x \in \mathbb{R}^{CHW}\\) into a latent representation \\(z \in \mathbb{R}^{d}\\), where \\(z = G(x)\\). Then, the decoder \\(D\\) is used to reconstruct the image \\(x'\\) from the latent representation \\(z\\) as \\(x' = D(z)\\).
 
-Thus the objective of the LDM can be formulated to:
-
-$$
-L = E_{G(x), \epsilon ~_{\mathcal{N}(0,1)},t} [ || \epsilon - \epsilon_{\theta}(z_{t}, t) ||_{2}^2]
-$$
-
-**The conditioning Mechanism**: The latent diffusion model can be conditioned to $y$, text description to generate images that align with it. The conditioning is introduced on the level of U-Net, where cross attention mechanism was used to fuse the projected condition $y$ with the latent representation $z$ using a domain specific encoder $\tau_{theta} \in \mathbb{R}^{M \times d_r}$.
+Thus the objective of the LDM can be formulated as:
 
 $$
-Attention(Q, K, V) = softmax(\frac{QK^T}{\sqrt{d_k}})V
+L = E_{G(x), \epsilon \sim \mathcal{N}(0,1), t} \left[ \| \epsilon - \epsilon_{\theta}(z_{t}, t) \|_{2}^2 \right]
 $$
 
-Where $Q = W_q \cdot \phi(z)$, $K = W_k \cdot \tau_{\theta}(y)$, $V = W_v \cdot \tau_{\theta}(y)$
+**The Conditioning Mechanism**: The latent diffusion model can be conditioned on \\(y\\), a text description, to generate images that align with it. The conditioning is introduced at the level of the U-Net, where a cross-attention mechanism is used to fuse the projected condition \\(y\\) with the latent representation \\(z\\) using a domain-specific encoder \\(\tau_{\theta} \in \mathbb{R}^{M \times d_r}\\).
 
-$\phi(z) \in \mathbb{R}^{N \times d_{\epsilon}}$
-$\tau_{\theta}(y) \in \mathbb{R}^{M \times d_{r}}$
-$ W_q \in \mathbb{R}^{d \times d_{\epsilon}}$
-$ W_k \in \mathbb{R}^{d \times d_{r}}$
-$ W_v \in \mathbb{R}^{d \times d_{r}}$
+$$
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+$$
+
+Where:
+
+- \\(Q = W_q \cdot \phi(z)\\)  
+- \\(K = W_k \cdot \tau_{\theta}(y)\\)  
+- \\(V = W_v \cdot \tau_{\theta}(y)\\)  
+
+With:
+
+- \\(\phi(z) \in \mathbb{R}^{N \times d_{\epsilon}}\\)  
+- \\(\tau_{\theta}(y) \in \mathbb{R}^{M \times d_r}\\)  
+- \\(W_q \in \mathbb{R}^{d \times d_{\epsilon}}\\),  
+- \\(W_k \in \mathbb{R}^{d \times d_r}\\),  
+- \\(W_v \in \mathbb{R}^{d \times d_r}\\)
 
 Based on image conditioning, the LDM is learned via:
 
 $$
-L = E_{G(x), \epsilon ~_{\mathcal{N}(0,1)},t} [ || \epsilon - \epsilon_{\theta}(z_{t}, t, y) ||_{2}^2]
-$$  
+L = E_{G(x), \epsilon \sim \mathcal{N}(0,1), t} \left[ \| \epsilon - \epsilon_{\theta}(z_{t}, t, y) \|_{2}^2 \right]
+$$
 
 <div align="center">
   <img src="/images/DM/stable_diffusion.png" alt="Latent Diffusion Models illustration">
@@ -369,8 +379,8 @@ $$
 
 **Regularization**: The latent diffusion model can be regularized to prevent high variance in the latent space.
 
-- KL-reg: a slight KL-penality on the latent space towards standard normal.
-- VQ-reg: uses vector quantization layer within the decoder.
+- **KL-reg**: a slight KL penalty on the latent space toward standard normal.  
+- **VQ-reg**: uses a vector quantization layer within the decoder.
 
 ## Applications
 
