@@ -55,8 +55,11 @@ While NeRF and its variants have achieved impressive photorealism in novel view 
 
 Introduced by [Kerbl et al., 2023](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/), Gaussian Splatting replaces neural field representations with a compact, interpretable formulation that enables fast optimization, real-time rendering, and high-fidelity view synthesis.
 
-<div style="text-align: center;">
-    <img src="/images/GS/paper.png" alt="Figure 02">
+<div style="display: flex; justify-content: center;">
+  <figure style="text-align: center;">
+    <img src="/images/GS/paper.png" alt="Figure 01" style="width: 75%;">
+    <figcaption>Figure 1: Overview of Gaussian Splatting [Kerbl et al., 2023]</figcaption>
+  </figure>
 </div>
 
 ## 2. 3D Gaussian Representation
@@ -89,10 +92,23 @@ This formulation is mathematically equivalent to the volumetric rendering equati
 
 ### 2.2 Scene Representation with Splats
 
-Each point in the scene is modeled as a **3D anisotropic Gaussian**, which is differentiable and can be efficiently projected into 2D splats for rasterization. However, Structure-from-Motion (SfM) point clouds are often sparse and lack reliable surface normals (noisy), making direct surface modeling difficult.
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin: 1em 0; gap: 1.5em;">
 
-<div style="text-align: center;">
-    <img src="/images/GS/spalts.png" alt="Figure 03">
+  <!-- Left: Text Block -->
+  <div style="flex: 1 1 300px; min-width: 250px;">
+    <p>
+      Each point in the scene is modeled as a <strong>3D anisotropic Gaussian</strong>, which is differentiable and can be efficiently projected into 2D splats for rasterization. However, Structure-from-Motion (SfM) point clouds are often sparse and lack reliable surface normals (noisy), making direct surface modeling difficult.
+    </p>
+  </div>
+
+  <!-- Right: Centered Figure -->
+  <div style="flex: 1 1 300px; min-width: 150px; display: flex; justify-content: center;">
+    <figure style="text-align: center;">
+      <img src="/images/GS/spalts.png" alt="Figure 3" style="width: 60%;">
+      <figcaption>Figure 3: 3D splats projected into 2D for rasterization.</figcaption>
+    </figure>
+  </div>
+
 </div>
 
 To address this, each Gaussian is defined by a **3D covariance matrix** \\(\Sigma_i\\) in world space, centered at its mean position \\(\mu_i\\). The spatial influence of a Gaussian is given by:
@@ -125,8 +141,17 @@ $$
 \mathcal{N}(\mu_{\text{camera}, i}, \Sigma_{\text{camera}, i})
 $$
 
-<div style="text-align: center;">
-    <img src="/images/GS/transformation.png" alt="Figure 04">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin: 1.5em 0; gap: 1.5em;">
+
+  <div style="flex: 1 1 45%; min-width: 250px;"></div>
+
+  <div style="flex: 1 1 45%; min-width: 250px;">
+    <div style="text-align: center;">
+      <img src="/images/GS/transformation.png" alt="Figure 4" style="width: 100%;">
+      <figcaption>Figure 4: Transformation of a Gaussian from world to camera space.</figcaption>
+    </div>
+  </div>
+
 </div>
 
 **📡 Ray Space Transformation:**
@@ -212,7 +237,8 @@ This allows the system to perform stable and efficient updates while preserving 
 While optimizing parameters improves accuracy, maintaining an effective Gaussian distribution requires dynamic adaptation of their count and placement.
 
 <div style="text-align: center;">
-    <img src="/images/GS/control_density.png" alt="Figure 05">
+    <img src="/images/GS/control_density.png" alt="Figure 05" style="width: 55%;">
+    <figcaption>Figure 5: Adaptive density control Algorithm.</figcaption>
 </div>
 
 The density control loop periodically adjusts the Gaussian set with three operations:
@@ -235,8 +261,17 @@ This densification/pruning is run every few hundred iterations (e.g., every 100 
 - Keeps parameter count efficient
 - Prevents under-reconstruction and over-reconstruction regions.
 
-<div style="text-align: center;">
-    <img src="/images/GS/densification_algo.png" alt="Figure 06">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin: 1.5em 0; gap: 1.5em;">
+
+  <div style="flex: 1 1 45%; min-width: 250px;"></div>
+
+  <div style="flex: 1 1 45%; min-width: 250px;">
+    <div style="text-align: center;">
+      <img src="/images/GS/densification_algo.png" alt="Figure 6" style="width: 100%; max-width: 500px;">
+      <figcaption>Figure 6: Densification algorithm overview.</figcaption>
+    </div>
+  </div>
+
 </div>
 
 ## 4. Differentiable Tile-Based Rasterization
@@ -325,8 +360,17 @@ $$
 
 This avoids storing full blending chains and allows efficient gradient computation for all contributing Gaussians.
 
-<div style="text-align: center;">
-    <img src="/images/GS/rasterization_algo.png" alt="Figure 07">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin: 1.5em 0; gap: 1.5em;">
+
+  <div style="flex: 1 1 45%; min-width: 250px;"></div>
+
+  <div style="flex: 1 1 45%; min-width: 250px;">
+    <div style="text-align: center;">
+      <img src="/images/GS/rasterization_algo.png" alt="Figure 7" style="width: 100%; max-width: 500px;">
+      <figcaption>Figure 7: Rasterization algorithm overview.</figcaption>
+    </div>
+  </div>
+
 </div>
 
 ## 5. Training Pipeline
