@@ -2,6 +2,8 @@
 title: "Neural Radiance Fields: A Comprehensive Review 📚🔍✨"
 date: 2024-10-19
 permalink: /posts/nerfs/
+image: /images/Nerf_photos/Nerf/fig_02.png
+description: "This blog offers a comprehensive exploration of Neural Radiance Fields (NeRFs), a method for photorealistic 3D scene reconstruction from sparse 2D images. It covers foundational concepts, training techniques, and notable advancements and well-known variants in the NeRF family."
 tags:
   - 3D Reconstruction
   - Neural Radiance Fields
@@ -9,22 +11,6 @@ tags:
   - Rendering
   - Computer Vision
 ---
-
-<div style="display: flex; align-items: center; gap: 20px;">
-    <div style="flex: 1;">
-        <p>
-            <em>
-                This blog offers a comprehensive exploration of Neural Radiance Fields (NeRFs),
-                a method for photorealistic 3D scene reconstruction from sparse 2D images. It
-                covers foundational concepts, training techniques, and notable advancements
-                and well-known variants in the NeRF family.
-            </em>
-        </p>
-    </div>
-    <div style="flex: 1; text-align: center;">
-        <img src="/images/Nerf_photos/Nerf/fig_02.png" alt="Figure 02" style="max-width: 100%; height: auto;">
-    </div>
-</div>
 
 ## **Table of Contents**
 
@@ -317,7 +303,7 @@ To evaluate the realism, accuracy, and efficiency of Neural Radiance Fields (NeR
 
    A higher \\(PSNR\\) value indicates better image quality, with less deviation from the ground truth image.
 
-2. **SSIM (Structural Similarity Index Metric)**:  
+1. **SSIM (Structural Similarity Index Metric)**:  
    Evaluates the structural similarity between the synthesized and ground truth images, incorporating luminance, contrast, and structure. The SSIM index can be calculated as:  
    $$
    \text{SSIM}(I, I_{\text{GT}}) = \frac{(2\mu_{I} \mu_{I_{\text{GT}}} + C_1)(2\sigma_{I I_{\text{GT}}} + C_2)}{(\mu_{I}^2 + \mu_{I_{\text{GT}}}^2 + C_1)(\sigma_{I}^2 + \sigma_{I_{\text{GT}}}^2 + C_2)}
@@ -339,7 +325,7 @@ To evaluate the realism, accuracy, and efficiency of Neural Radiance Fields (NeR
 
    The \\(\text{SSIM}\\) index ranges from -1 to 1, with 1 indicating perfect similarity between the images.
 
-3. **LPIPS (Learned Perceptual Image Patch Similarity)**:  
+2. **LPIPS (Learned Perceptual Image Patch Similarity)**:  
 
    LPIPS is a perceptual similarity metric that evaluates the visual similarity between images based on deep features extracted from neural networks. It captures both low-level and high-level visual information to compute a perceptual distance between images.
 

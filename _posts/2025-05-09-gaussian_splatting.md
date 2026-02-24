@@ -2,6 +2,8 @@
 title: 'A Comprehensive Study for Gaussian Splatting'
 date: 2025-05-09
 permalink: /posts/gaussian-splatting/
+image: /images/GS/hero.png
+description: "Gaussian Splatting is a cutting edge technique for real time neural rendering that models scenes using explicit 3D Gaussians. It offers an alternative to neural implicit representations (NIR) and NeRFs. This study provides a rigorous, structured exploration of its mathematical foundations, differentiable rasterization pipeline, and key advancements that are redefining Gaussian-based scene representation."
 tags:
 
 - Gaussian Splatting
@@ -11,19 +13,6 @@ tags:
 - Machine Learning
 
 ---
-
-<div style="display: flex; align-items: center; gap: 20px;">
-    <div style="flex: 1;">
-        <p>
-            <em>
-                Gaussian Splatting is a cutting edge technique for real time neural rendering that models scenes using explicit 3D Gaussians. It offers an alternative to neural implicit representations (NIR) and NeRFs. This study provides a rigorous, structured exploration of its mathematical foundations, differentiable rasterization pipeline, and key advancements that are redefining Gaussian-based scene representation.
-            </em>
-        </p>
-    </div>
-    <div style="flex: 1; text-align: center;">
-        <img src="/images/GS/hero.png" alt="Gaussian Splatting Overview" style="max-width: 100%; height: auto;">
-    </div>
-</div>
 
 ## Table of Contents
 

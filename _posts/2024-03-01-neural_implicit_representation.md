@@ -2,6 +2,8 @@
 title: 'Neural Implicit Representation'
 date: 2024-03-01
 permalink: /posts/NIR/
+image: /images/NIR/nir.png
+description: "Welcome to this guide on Neural Implicit Representations (NIR), an advanced approach to 3D reconstruction and graphics. Explore concepts like implicit functions, occupancy networks, volumetric rendering, and Neural Radiance Fields (NeRF), enabling high-resolution 3D modeling."
 tags:
   - Neural Implicit Representation
   - 3D reconstruction
@@ -9,19 +11,6 @@ tags:
   - Volume Rendering
   - NeRF
 ---
-
-<div style="display: flex; align-items: center; gap: 20px;">
-    <div style="flex: 1;">
-        <p>
-            <em>
-                Welcome to this guide on Neural Implicit Representations (NIR), an advanced approach to 3D reconstruction and graphics. Explore concepts like implicit functions, occupancy networks, volumetric rendering, and Neural Radiance Fields (NeRF), enabling high-resolution 3D modeling.
-            </em>
-        </p>
-    </div>
-    <div style="flex: 1; text-align: center;">
-        <img src="/images/NIR/nir.png" alt="Figure 02" style="max-width: 100%; height: auto;">
-    </div>
-</div>
 
 ## Table of Contents
 

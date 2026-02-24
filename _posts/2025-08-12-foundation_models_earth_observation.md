@@ -2,6 +2,8 @@
 title: 'Foundation Models for Earth Observation (EO)'
 date: 2025-08-12
 permalink: /posts/foundation-models-earth-observation/
+image: /images/FM-EO/3d-abc-fm-overview.png
+description: "Foundation Models (FMs) are transforming Earth Observation (EO) by unifying diverse satellite, environmental, and sensor datasets into powerful multimodal representations. This study surveys the state of the art, covering adaptive architectures, large-scale pretraining pipelines, and generative any-to-any frameworks. We examine how these advances are accelerating applications and the integration of EO into digital twins."
 tags:
 - Earth Observation
 - Foundation Models
@@ -9,19 +11,6 @@ tags:
 - Multimodal Learning
 - Climate Monitoring
 ---
-
-<div style="display: flex; align-items: center; gap: 20px;">
-    <div style="flex: 1;">
-        <p>
-            <em>
-                Foundation Models (FMs) are transforming Earth Observation (EO) by unifying diverse satellite, environmental, and sensor datasets into powerful multimodal representations. This study surveys the state of the art, covering adaptive architectures, large-scale pretraining pipelines, and generative “any-to-any” frameworks. We examine how these advances are accelerating applications and the integration of EO into digital twins.
-            </em>
-        </p>
-    </div>
-    <div style="flex: 1; text-align: center;">
-        <img src="/images/FM-EO/3d-abc-fm-overview.png" alt="Foundation Models for Earth Observation Overview" style="max-width: 100%; height: auto;">
-    </div>
-</div>
 
 ## Table of Contents
 

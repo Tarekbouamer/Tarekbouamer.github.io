@@ -1,84 +1,122 @@
 {% include base_path %}
 
-{% if post.header.teaser %}
-  {% capture teaser %}{{ post.header.teaser }}{% endcapture %}
+{% if post.image %}
+{% capture teaser %}{{ post.image }}{% endcapture %}
+{% elsif post.header.teaser %}
+{% capture teaser %}{{ post.header.teaser }}{% endcapture %}
 {% else %}
-  {% assign teaser = site.teaser %}
+{% assign teaser = site.teaser %}
 {% endif %}
 
 {% if post.id %}
-  {% assign title = post.title | markdownify | remove: "<p>" | remove: "</p>" %}
+{% assign title = post.title | markdownify | remove: "<p>" | remove: "</p>" %}
 {% else %}
-  {% assign title = post.title %}
+{% assign title = post.title %}
 {% endif %}
 
-<div class="{{ include.type | default: "list" }}__item">
+{% assign excerpt_html = post.excerpt | markdownify %}
+{% assign excerpt_text = "" %}
+{% assign excerpt_image = "" %}
+{% if post.collection == "portfolio" and post.excerpt contains "<img" %} {% assign excerpt_text=post.excerpt |
+  split: "<img" | first %} {% assign excerpt_text=excerpt_text | replace: "<br />" , " " | replace: "<br/>" , " " |
+  strip %} {% if post.excerpt contains 'src="' %} {% assign img_part=post.excerpt | split: 'src="' | last %} {% assign
+  excerpt_image=img_part | split: '"' | first %} {% elsif post.excerpt contains "src='" %} {% assign
+  img_part=post.excerpt | split: "src='" | last %} {% assign excerpt_image=img_part | split: "'" | first %} {% endif %}
+  {% endif %} <div class=" {{ include.type | default: " list" }}__item"{% if include.type=="grid" %}
+  style="margin: 0; width: 100%; float: none;" {% endif %}>
+  {% if include.type == "grid" %}
   <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
-    {% if include.type == "grid" and teaser %}
-      <div class="archive__item-teaser">
-        <img src=
-          {% if teaser contains "://" %}
-            "{{ teaser }}"
-          {% else %}
-            "{{ teaser | prepend: "/images/" | prepend: base_path }}"
-          {% endif %}
-          alt="">
-      </div>
+    {% if teaser %}
+    <div class="archive__item-teaser"
+      style="height: 240px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+      <img src="{{ teaser }}" alt="" style="width: 100%; height: 100%; object-fit: contain; border-radius: 4px;">
+    </div>
     {% endif %}
 
-    <h2 class="archive__item-title" itemprop="headline">
-      {% if post.link %}
-        <a href="{{ post.link }}">{{ title }}</a> <a href="{{ base_path }}{{ post.url }}" rel="permalink"><i class="fa fa-link" aria-hidden="true" title="permalink"></i><span class="sr-only">Permalink</span></a>
-      {% else %}
+    <div style="padding-top: 10px;">
+      <h2 class="archive__item-title" itemprop="headline"
+        style="margin-top: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3;">
+        {% if post.link %}
+        <a href="{{ post.link }}">{{ title }}</a> <a href="{{ base_path }}{{ post.url }}" rel="permalink"><i
+            class="fa fa-link" aria-hidden="true" title="permalink"></i><span class="sr-only">Permalink</span></a>
+        {% else %}
         <a href="{{ base_path }}{{ post.url }}" rel="permalink">{{ title }}</a>
-      {% endif %}
-    </h2>
-    
-    {% if post.read_time %}
-      <p class="page__meta"><i class="fa fa-clock" aria-hidden="true"></i> {% include read-time.html %}</p>
-    {% endif %}
-
-        {% if post.collection == 'teaching' %}
-          <p> {{ post.type }}, <i>{{ post.venue }}</i>, {{ post.date | default: "1900-01-01" | date: "%Y" }} </p>
-        {% elsif post.collection == 'publications' %}
-          <p>Published in <i>{{ post.venue }}</i>, {{ post.date | default: "1900-01-01" | date: "%Y" }} </p>
-        {% elsif post.date %}
-         <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].date_label | default: "Published:" }}</strong> <time datetime="{{ post.date | default: "1900-01-01" | date_to_xmlschema }}">{{ post.date | default: "1900-01-01" | date: "%B %d, %Y" }}</time></p>
         {% endif %}
+      </h2>
 
-    {% if post.excerpt and site.read_more != 'enabled' %}
-    <p class="archive__item-excerpt" itemprop="description">{{ post.excerpt | markdownify }}</p>
-    {% elsif post.excerpt and site.read_more == 'enabled' %}
-    <p class="archive__item-excerpt" itemprop="description"><p>{{ post.excerpt | markdownify | remove: '<p>' | remove: '</p>' }}<strong><a href="{{ base_path }}{{ post.url }}" rel="permalink"> Read more</a></strong></p></p>
-    {% endif %}
-    
-    {% if post.citation and post.paperurl and post.slidesurl and post.bibtexurl %}
-      <p>Recommended citation: {{ post.citation }}<br /><a href="{{ post.paperurl }}">Download Paper</a> | <a href="{{ post.slidesurl }}">Download Slides</a> | <a href="{{ post.bibtexurl }}">Download Bibtex</a></p>
-    {% elsif post.citation and post.paperurl and post.slidesurl %}
-      <p>Recommended citation: {{ post.citation }}<br /><a href="{{ post.paperurl }}">Download Paper</a> | <a href="{{ post.slidesurl }}">Download Slides</a></p>
-    {% elsif post.citation and post.paperurl and post.bibtexurl %}
-      <p>Recommended citation: {{ post.citation }}<br /><a href="{{ post.paperurl }}">Download Paper</a> | <a href="{{ post.bibtexurl }}">Download Bibtex</a></p>
-    {% elsif post.citation and post.paperurl %}
-      <p>Recommended citation: {{ post.citation }}<br /><a href="{{ post.paperurl }}">Download Paper</a></p>
-    {% elsif post.citation and post.slidesurl and post.bibtexurl %}
-      <p>Recommended citation: {{ post.citation }}<br /><a href="{{ post.slidesurl }}">Download Slides</a> | <a href="{{ post.bibtexurl}}">Download Bibtex</a></p>
-    {% elsif post.citation and post.slidesurl %}
-      <p>Recommended citation: {{ post.citation }}<br /><a href="{{ post.slidesurl }}">Download Slides</a></p>
-    {% elsif post.citation and post.bibtexurl %}
-      <p>Recommended citation: {{ post.citation }}<br /><a href="{{ post.bibtexurl }}">Download Bibtex</a></p>
-    {% elsif post.citation %}
-      <p>Recommended citation: {{ post.citation }}</p>
-    {% elsif post.paperurl and post.bibtexurl %}
-      <p><a href=" {{ post.paperurl }} ">Download Paper</a> | <a href="{{ post.bibtexurl }}">Download Bibtex</a></p>
-    {% elsif post.paperurl %}
-      <p><a href=" {{ post.paperurl }} ">Download Paper</a></p>
-    {% elsif post.slidesurl and post.bibtexurl %}
-      <p><a href="{{ post.slidesurl }}">Download Slides</a> | <a href="{{ post.bibtexurl }}">Download Bibtex</a></p>
-    {% elsif post.slidesurl %}
-      <p><a href="{{ post.slidesurl }}">Download Slides</a></p>
-    {% elsif post.bibtexurl %}
-      <p><a href="{{ post.bibtexurl }}">Download Bibtex</a></p>
+      {% if post.description %}
+      <p class="archive__item-excerpt" itemprop="description"
+        style="margin: 8px 0 0; font-style: italic; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+        {{ post.description }}</p>
+      {% elsif post.excerpt %}
+      <p class="archive__item-excerpt" itemprop="description"
+        style="margin: 8px 0 0; font-style: italic; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+        {% if post.collection == "portfolio" %}
+        {{ post.excerpt | markdownify }}
+        {% else %}
+        {{ post.excerpt | markdownify | strip_html | strip_newlines | truncatewords: 30 }}
+        {% endif %}
+      </p>
+      {% endif %}
+
+      {% if post.date %}
+      <p class="page__date" style="margin-top: 8px;"><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> <time
+          datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %d, %Y" }}</time></p>
+      {% endif %}
+    </div>
+  </article>
+  {% else %}
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork"
+    style="display: flex; gap: 20px; align-items: center;">
+
+    <div style="flex: 0 0 60%;">
+      <h2 class="archive__item-title" itemprop="headline"
+        style="margin-top: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3;">
+        {% if post.link %}
+        <a href="{{ post.link }}">{{ title }}</a> <a href="{{ base_path }}{{ post.url }}" rel="permalink"><i
+            class="fa fa-link" aria-hidden="true" title="permalink"></i><span class="sr-only">Permalink</span></a>
+        {% else %}
+        <a href="{{ base_path }}{{ post.url }}" rel="permalink">{{ title }}</a>
+        {% endif %}
+      </h2>
+
+      {% if post.date %}
+      <p class="page__date"><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> <time
+          datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %d, %Y" }}</time></p>
+      {% endif %}
+
+      {% if post.collection == "portfolio" and excerpt_text %}
+      <p class="archive__item-excerpt" itemprop="description"
+        style="font-style: italic; font-size: 1.1em; line-height: 1.6;">
+        {{ excerpt_text }}</p>
+      {% elsif post.description %}
+      <p class="archive__item-excerpt" itemprop="description"
+        style="font-style: italic; font-size: 1.1em; line-height: 1.6;">
+        {{ post.description }}</p>
+      {% elsif post.excerpt %}
+      <p class="archive__item-excerpt" itemprop="description"
+        style="font-style: italic; font-size: 1.1em; line-height: 1.6;">
+        {% if post.collection == "portfolio" %}
+        {{ post.excerpt | markdownify }}
+        {% else %}
+        {{ post.excerpt | markdownify | strip_html | strip_newlines | truncatewords: 50 }}
+        {% endif %}
+      </p>
+      {% endif %}
+    </div>
+
+    {% if post.collection == "portfolio" and excerpt_image %}
+    <div class="archive__item-teaser"
+      style="flex: 0 0 40%; display: flex; align-items: center; justify-content: center; height: 200px; overflow: hidden;">
+      <img src="{{ excerpt_image }}" alt="" style="width: 100%; height: 100%; object-fit: contain; border-radius: 4px;">
+    </div>
+    {% elsif teaser %}
+    <div class="archive__item-teaser"
+      style="flex: 0 0 40%; display: flex; align-items: center; justify-content: center; height: 200px; overflow: hidden;">
+      <img src="{{ teaser }}" alt="" style="width: 100%; height: 100%; object-fit: contain; border-radius: 4px;">
+    </div>
     {% endif %}
 
   </article>
-</div>
+  {% endif %}
+  </div>

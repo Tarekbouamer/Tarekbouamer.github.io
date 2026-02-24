@@ -2,6 +2,8 @@
 title: "Injecting Language into the 3D World - Part I"
 date: 2026-02-16
 permalink: /posts/injecting-language-into-3d-world-part-1/
+image: /images/3DLLM/hero.png
+description: "This article presents a structured and research-oriented exploration of how language models are integrated with 3D scene representations. We analyze alignment strategies, architectural design patterns, and task formulations including captioning, grounding, conversation, embodied decision-making, and text-to-3D generation."
 tags:
 - 3D Vision
 - Large Language Models
@@ -10,20 +12,6 @@ tags:
 - Vision Language Action
 - 3D Generation
 ---
-
-<div style="display: flex; align-items: center; gap: 20px;">
-    <div style="flex: 1;">
-        <p>
-            <em>
-                This article presents a structured and research-oriented exploration of how language models are integrated with 3D scene representations. We analyze alignment strategies, architectural design patterns, and task formulations including captioning, grounding, conversation, embodied decision-making, and text-to-3D generation. The focus is not on surface-level multimodal fusion, but on the deeper geometric and semantic challenges that arise when continuous 3D space meets discrete token-based reasoning.
-            </em>
-        </p>
-    </div>
-    <div style="flex: 1; text-align: center;">
-        <img src="/images/3DLLM/hero.png" alt="Injecting Language into the 3D World" style="max-width: 100%; height: auto;">
-      <p><em>Figure: 3D-LLM pipeline overview.</em></p>
-    </div>
-</div>
 
 ## Table of Contents
 

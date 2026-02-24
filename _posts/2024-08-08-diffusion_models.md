@@ -2,26 +2,14 @@
 title: 'Diffusion Models: A Comprehensive Guide'
 date: 2024-08-08
 permalink: /posts/diffusion-models/
+image: /images/DM/forward_reverse_diffusions.png
+description: "Welcome to this guide on Diffusion Models, a groundbreaking class of generative models that create high-quality data by refining noisy inputs. This blog covers their foundations, architectures, training, advanced techniques like conditional and latent diffusion, and applications ranging from image editing to medical imaging, offering a concise overview of their impact on machine learning."
 tags:
   - Diffusion Models
   - Generative Models
   - Machine Learning
   - Deep Learning
 ---
-
-
-<div style="display: flex; align-items: center; gap: 20px;">
-    <div style="flex: 1;">
-        <p>
-            <em>
-                Welcome to this guide on Diffusion Models, a groundbreaking class of generative models that create high-quality data by refining noisy inputs. This blog covers their foundations, architectures, training, advanced techniques like conditional and latent diffusion, and applications ranging from image editing to medical imaging, offering a concise overview of their impact on machine learning.
-            </em>
-        </p>
-    </div>
-    <div style="flex: 1; text-align: center;">
-        <img src="/images/DM/forward_reverse_diffusions.png" alt="Figure 02" style="max-width: 100%; height: auto;">
-    </div>
-</div>
 
 ## Table of Contents
 
