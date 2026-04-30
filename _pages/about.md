@@ -8,51 +8,42 @@ redirect_from:
   - /about.html
 ---
 
-## Hello, I’m Tarek  
+## Hello, I'm Tarek
 
-Welcome to my space! 🚀  
+I am a Research Staff Member at Layer42, working on computer vision, visual localization, and 3D vision for real-world autonomous systems.
 
-I’m a **young researcher** passionate about **computer vision**, **robotics**, and **machine learning**. I’m driven by curiosity, problem-solving, and a commitment to innovation.  
+My recent work focuses on foundation models for visual place recognition, perception and mapping for robotics, and the use of generative models, Physical AI, and world modeling to build deployment-ready spatial intelligence systems.
 
-I hold a **Master’s degree in Computer Vision and Robotics** from *Paris Saclay University* (*CentraleSupélec / Paris-Sud*), France, where I honed my technical expertise and research acumen. I also earned a **degree in Control and Systems Engineering** from *INELEC, Boumerdes University*, Algeria, alongside graduating with **distinction** in my **Bachelor’s in Electrical and Electronics Engineering**.
+I hold master's degrees from Paris-Saclay University, CentraleSupelec, and Paris-Sud University in computer vision, robotics, control, and autonomous systems. I previously studied Control and Systems Engineering at INELEC, Boumerdes University.
 
----
+Across research and applied R&D roles, I have worked on:
 
-### 🌟 Professional Journey
-
-- **Research Specialist @ TTI-ATRC, Abu Dhabi, UAE**  
-  - Developed innovative **visual positioning systems** for Aerial Vehicles.  
-  - Engineered **automated object detection and tracking** systems.  
-
-- **Research Assistant @ Institute of Computer Graphics and Vision (ICG), Graz, Austria**  
-  - Master Thesis in **3D Scene Completion using Plane Instance Segmentation** in collaboration with Sony Europe.
-  - Developed a solution for **Overhead Multi-Object Detection and Tracking**.
-  - Worked closely with renowned researchers, including *Prof. Friedrich Fraundorfer*, *Prof. Horst Bischof*, and *Dr. Horst Possegger*.  
+* Visual positioning and localization for UAVs and real-world robotics
+* Visual place recognition and feature matching across challenging conditions
+* 3D scene understanding and reconstruction for spatial perception
+* Motion planning and autonomous systems with deployment constraints in mind
 
 ---
 
-### 🔬 Research Interests
+### Research Interests
 
-I focus on advancing **computer vision**, **robotics**, and **machine learning** in areas such as **visual localization**, **3D reconstruction**, **generative models**, and **feature matching**.  
-  
----
+I am interested in computer vision for geospatial AI, embodiment, and Physical AI. My interests span:
 
-### 📈 Vision  
-
-I am inspired by the potential of **AI** and **Applied Mathematics** to tackle real-world challenges and drive meaningful advancements. By integrating insights from **Computer Vision** and **Robotics**, I aim to bridge innovation with practical applications to develop impactful, real-world solutions.  
-
-- 🟦 **Develop practical and innovative technologies**  
-- 🟩 **Collaborate with diverse and dynamic teams across fields**  
-- 🟨 **Make meaningful contributions to academia, industry, and society**  
-- 🟧 **Inspire and mentor the next generation of innovators**  
-- 🟪 **Continuously evolve and stay at the forefront of emerging trends**  
+* Visual place recognition and localization
+* 3D scene understanding, 3D-LLMs, and spatial reasoning
+* Feed-forward reconstruction and VGGT-style 3D perception pipelines
+* Foundation, generative, and multimodal models for embodied intelligence
 
 ---
 
-### 🤝 Let’s Collaborate
+### Collaboration
 
-I am currently seeking **research opportunities** in **computer vision**, **robotics**, and **machine learning**. Whether it’s an exciting project, collaboration, or mentorship, I’d love to connect!  
+I am the founder of Layer42 and open to:
+
+* Research collaborations
+* Applied R&D work
+* Select opportunities in computer vision, localization, 3D perception, and embodied AI
 
 ---
 
-Thank you for stopping by! :)  
+Thank you for visiting.

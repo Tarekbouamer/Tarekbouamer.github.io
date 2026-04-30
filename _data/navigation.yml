@@ -20,11 +20,10 @@ main:
   - title: "Resume"
     url: /resume/
 
-  - title: "Portfolio"
-    url: /portfolio/
+  - title: "Projects"
+    url: /projects/
 
-  - title: "Posts"
+  - title: "Blogs"
     url: /blog-posts/
-
   # - title: "Guide"
   #   url: /markdown/

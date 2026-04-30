@@ -1,14 +1,18 @@
 ---
 layout: archive
-title: "Portfolio"
-permalink: /portfolio/
+title: "Projects"
+permalink: /projects/
 author_profile: true
+redirect_from:
+- /portfolio/
 ---
 
 {% include base_path %}
 
 
-{% for post in site.portfolio %}
-  {% include archive-single.html %}
-{% endfor %}
+Short project index covering visual localization, 3D vision, and autonomous systems work.
 
+
+{% for post in site.portfolio %}
+{% include archive-single.html %}
+{% endfor %}

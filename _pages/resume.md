@@ -14,56 +14,57 @@ redirect_from:
 <img src="/images/sfm.png" alt="sfm" width="200" height="150" />
 <img src="/images/mixed_reality.jpg" alt="mixed_reality" width="200" height="150" />
 
-🎓 **Education**  
-======
+## Summary
 
-* M.Sc. in *Control, Computer Vision, and Signal Processing (ATSI)*, CentraleSupélec & Paris-Sud University, 2019  
-* M.Sc. in *Smart Aerospace & Autonomous Systems (SAAS)*, Paris-Saclay University, 2018  
-* M.Sc. in *Control and Systems Engineering*, INELEC - Boumerdes University, 2015  
-* B.Sc. in *Electrical and Electronic Engineering*, INELEC - Boumerdes University, 2013  
+Researcher in computer vision working on visual localization, robotic 3D vision, Spatial AI, and autonomous systems.
 
-🔬 **Research Experience**  
-======
+## Research Experience
 
-* **Sep 2021 – Present: Research Specialist, ATRC, UAE**  
-  * **Project:** Visual Positioning System (VPS)  
-    * Developed geo-localization and real-time mapping systems for UAV applications.  
-  * **Project:** Auto-Labeling, Object Detection, and Tracking  
-    * Built automated annotation pipelines for object detection and tracking.  
+* Jan 2025 - Present: **Research Staff Member**, Layer42
+  * Evaluating PEFT methods such as LoRA, IA3, and adapters on DINOv2, CLIP, and SigLIP for visual place recognition.
+  * Comparing linear probing with token- and attention-based aggregation for VPR evaluation and retrieval performance.
 
-* **Jan–Jul 2020: Research Assistant, Institute of Computer Graphics and Vision, Austria**  
-  * **Project:** Overhead Multi-Object Detection and Tracking (MOTS-AURO)  
-    * Created solutions for automated annotation, detection, and tracking in multi-object scenarios.  
-  * **Supervisors:** *Dr. Horst Possegger and Prof. Horst Bischof*  
+* Sep 2021 - Oct 2024: **Research Specialist**, Tawazun Technology and Innovation / ATRC, Abu Dhabi, UAE
+  * Led development of a visual positioning system for autonomous UAVs in GPS-denied environments, including field validation and embedded deployment.
+  * Built automated aerial surveillance pipelines for labeling, detection, and tracking.
 
-* **Apr–Dec 2019: Research Intern, Institute of Computer Graphics and Vision, Austria**  
-  * **Project:** 3D Scene Completion using Plane Instance Segmentation  
-    * Enhanced 3D scene reconstruction with semantic depth completion techniques.  
-  * **Supervisor:** *Prof. Friedrich Fraundorfer*  
+* Jan 2020 - Jul 2020: **Research Assistant**, Institute of Computer Graphics and Vision, Graz, Austria
+  * Worked on overhead multi-object detection and tracking for safety monitoring using a multi-camera RGB-D setup.
+  * Built annotation and tracking pipelines and benchmarked them on MOTS Challenge tasks.
 
-* **Apr–Sep 2018: Research Intern, Siemens PLM LMS, Belgium**  
-  * **Project:** Optimal Control and Planning for Autonomous Driving  
-    * Designed motion planning and control algorithms for autonomous vehicles.  
+* Apr 2019 - Dec 2019: **Research Intern**, Institute of Computer Graphics and Vision, Graz, Austria
+  * Co-developed DeepPCF-MVS for 3D scene completion and multi-view stereo reconstruction in collaboration with Sony Europe.
+  * Worked on plane-aware depth completion and geometric refinement for stronger reconstruction quality.
 
-💻 **Projects**  
-======
+* Apr 2018 - Sep 2018: **Research Intern**, Siemens PLM LMS, Leuven, Belgium
+  * Worked on motion planning and control for autonomous driving systems.
 
-* **VPS:** Visual positioning system for real-time mapping and localization in UAV applications.  
-* **Mappero:** A toolset for 3D capture and reconstruction, streamlining photogrammetry workflows.  
-* **ImMatch:** A library for robust image matching and feature extraction.  
-* **NN-MPC:** Kinodynamic motion planning and trajectory control for autonomous driving.  
-* **DeepPCF-MVS:** Depth estimation and scene completion for multi-view stereo (MVS) reconstructions.  
+## Selected Projects
 
-🏆 **Scholarships & Awards**  
-======
+* **VPS:** Visual positioning system for UAV geo-localization, mapping, and navigation.
+* **Mappero:** 3D capture and reconstruction tooling for photogrammetry workflows.
+* **ImMatch:** Image matching and feature extraction library for robust correspondence estimation.
+* **NN-MPC:** Motion planning and trajectory control for autonomous driving.
+* **DeepPCF-MVS:** Plane-aware depth completion and scene reconstruction for multi-view stereo.
 
-* Paris-Saclay Excellence Scholarship (2018)  
-* Erasmus+ Internship Grant (2018)  
-* Ranked 2nd in the SAAS Master program at Paris-Saclay University  
-* Honors Degree: Ranked 5th among all Bachelor/Master students at INELEC, Boumerdes University  
+## Education
 
-🌟 **Service and Leadership**  
-======
+* M.Sc. in *Control, Computer Vision, and Signal Processing (ATSI)*, CentraleSupelec and Paris-Sud University, Paris, France, 2019
 
-* Vice-President, Scientific Club "Nebras," Boumerdes University (2016–2017)  
-* Member, Scientific Club "INELECTRONICS," Boumerdes University  
+* M.Sc. in *Smart Aerospace and Autonomous Systems (SAAS)*, Paris-Saclay University, Paris, France, 2018
+
+* M.Sc. in *Control and Systems Engineering*, INELEC - Boumerdes University, Boumerdes, Algeria, 2015
+
+* B.Sc. in *Electrical and Electronic Engineering*, INELEC - Boumerdes University, Boumerdes, Algeria, 2013
+
+## Awards
+
+* Paris-Saclay Research Grant, 2018
+* Erasmus+ Internship Grant, 2018
+* Ranked 2nd in the SAAS Master program at Paris-Saclay University
+* Honors Degree, ranked 5th among Bachelor and Master students at INELEC, Boumerdes University
+
+## Service
+
+* Vice-President, Scientific Club "Nebras," Boumerdes University, 2016 - 2017
+* Member, Scientific Club "INELECTRONICS," Boumerdes University
